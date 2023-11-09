@@ -42,8 +42,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpActiveTimeElepsed;
     [SerializeField] private float jumpForceApplied;
     [SerializeField] private float jumpForce;
-    [SerializeField] private float jumpForceMin;
-    [SerializeField] private float jumpForceMax;
     [SerializeField] private float jumpForceDash;
 
     [Header("Grounded")]
@@ -77,11 +75,14 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController characterController;
     private UserInput userInput;
     private PlayerCollisionDetection collisionDetection;
+    private PlayerAnimator playerAnimator;
+
+    private CameraController cameraController;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        cameraController = CameraController.Instance;
     }
 
     // Update is called once per frame
@@ -109,15 +110,18 @@ public class PlayerMovement : MonoBehaviour
     }
 
     #region SetUp
-    public void SetUp(CharacterController characterController, UserInput userInput, PlayerCollisionDetection collisionDetection)
+    public void SetUp(CharacterController characterController, UserInput userInput, PlayerCollisionDetection collisionDetection, PlayerAnimator playerAnimator)
     {
         this.characterController = characterController;
         this.userInput = userInput;
         this.collisionDetection = collisionDetection;
+        this.playerAnimator = playerAnimator;
 
         isGrounded = false;
 
         gravity = gravityMinimun;
+
+        cameraController.SetStandingCameraPivot();
     }
 
     public void SetPlayerActive(bool isPlayerActive)
@@ -138,6 +142,11 @@ public class PlayerMovement : MonoBehaviour
             inputDir.x *= moveAirDampingMul;
         }
 
+        if(isDashActive)
+        {
+            inputDir.x = 0;
+        }
+
         jump = userInput.UserInputDir.y != 0;
 
         isWalking = !userInput.IsSprinting;
@@ -147,6 +156,41 @@ public class PlayerMovement : MonoBehaviour
         mouseX = userInput.MouseInputDir.x;
 
         inputDir.Normalize();
+
+        playerAnimator.SetStandingAnimation(!isCrouching);
+        playerAnimator.SetCrouchAnimation(isCrouching);
+
+        if (inputDir.x == 0 && inputDir.z == 0)
+        {
+            playerAnimator.SetRunningAnimation(0);
+        }
+        else if(inputDir.x == 0 && inputDir.z != 0)
+        {
+            if (inputDir.z > 0)
+            {
+                playerAnimator.SetRunningAnimation(isWalking ? 0.5f : 1f);
+            }
+            else
+            {
+                playerAnimator.SetRunningAnimation(-1);
+            }
+        }
+        else if (inputDir.x != 0 && inputDir.z == 0)
+        {
+            playerAnimator.SetRunningAnimation(isWalking ? 0.5f : 1f);
+        }
+
+        if (!isDashActive && isGrounded)
+        {
+            if (isCrouching)
+            {
+                cameraController.SetCrouchingCameraPivot();
+            }
+            else
+            {
+                cameraController.SetStandingCameraPivot();
+            }
+        }
     }
     #endregion
 
@@ -167,18 +211,24 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (isRunning && !isJumping)
         {
-            moveSpeedFinal = inputDir.z > 0 ? moveSpeedRun : moveSpeedWalk;
+            moveSpeedFinal = inputDir.z > 0 || inputDir.x != 0 ? moveSpeedRun : moveSpeedWalk;
         }
-        
+        else if(!isJumping)
+        {
+            moveSpeed = moveSpeedWalk;
+        }
+
         moveSpeed = Mathf.Lerp(moveSpeed, moveSpeedFinal, Time.deltaTime * moveSpeedLerp);
     }
 
     private void Move()
     {
         moveDir = inputDir.x * transform.right + inputDir.y * transform.up + inputDir.z * transform.forward;
+        moveDir *= moveSpeed;
+
         moveDir.y = moveSpeedY;
 
-        characterController.Move(moveDir * moveSpeed * Time.deltaTime);
+        characterController.Move(moveDir * Time.deltaTime);
     }
     #endregion
 
@@ -236,7 +286,8 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else
                 {
-                    jumpForceApplied = Mathf.Clamp(jumpForce * moveSpeed / moveSpeedWalk, jumpForceMin, jumpForceMax);
+                    jumpForceApplied = jumpForce;// * moveSpeedWalk / moveSpeed;
+                    //jumpForceApplied = Mathf.Clamp(jumpForce * moveSpeed / moveSpeedWalk, jumpForceMin, jumpForceMax);
                 }
             }
             else
@@ -253,6 +304,18 @@ public class PlayerMovement : MonoBehaviour
     private void CheckGround()
     {
         isGrounded = collisionDetection.IsGrounded;
+
+        playerAnimator.SetFallingAnimation(!isGrounded);
+
+        if(!isGrounded)
+        {
+            if(moveSpeed == moveSpeedDash && inputDir.z < 0)
+            {
+                moveSpeed = moveSpeedRun;
+            }
+
+            cameraController.SetFallingCameraPivot();
+        }
     }
     #endregion
 
@@ -308,6 +371,7 @@ public class PlayerMovement : MonoBehaviour
     private void SetDashActive()
     {
         isDashActive = true;
+        playerAnimator.SetDarhAnimation(isDashActive);
     }
 
     private void Dash()
@@ -316,10 +380,13 @@ public class PlayerMovement : MonoBehaviour
         {
             dashActiveTimeElapsed += Time.deltaTime;
 
-            if(dashActiveTimeElapsed > dashActiveDuration)
+            cameraController.SetDashingCameraPivot();
+
+            if (dashActiveTimeElapsed > dashActiveDuration || inputDir.z <= 0)
             {
                 dashActiveTimeElapsed = 0;
                 isDashActive = false;
+                playerAnimator.SetDarhAnimation(isDashActive);
             }
         }
     }
@@ -328,8 +395,8 @@ public class PlayerMovement : MonoBehaviour
     #region Character Controller Heigh / Center
     private void SetCharacterControllerHeightAndCenter()
     {
-        characterController.height = isCrouching ? characterControllerHeight_Crouch : characterControllerHeight_Standing;
-        characterController.center = isCrouching ? characterControllerCenter_Crouch : characterControllerCenter_Stanting;
+        characterController.height = isCrouching || isDashActive ? characterControllerHeight_Crouch : characterControllerHeight_Standing;
+        characterController.center = isCrouching || isDashActive ? characterControllerCenter_Crouch : characterControllerCenter_Stanting;
     }
     #endregion
 }

@@ -17,10 +17,14 @@ public class UserInput : MonoBehaviour
     [SerializeField] private float mouseSensivityX;
     [SerializeField] private float mouseSensivityY;
 
+    [Header("Attack")]
+    [SerializeField] private bool mainAttackInput;
+
     public Vector3 UserInputDir { get { return input; } }
     public Vector3 MouseInputDir { get { return mouseInput; } }
     public bool IsSprinting { get { return isSprinting; } }
     public bool IsCrouching { get { return isCrouching; } }
+    public bool MainAttackInput { get { return mainAttackInput; } }
 
     #region SingleTon
     public static UserInput Instance;
@@ -57,6 +61,8 @@ public class UserInput : MonoBehaviour
         GetCrouchInput();
 
         MouseInput();
+
+        GetMainAttackInput();
     }
 
     public void SetUserInputActive(bool isActive)
@@ -97,5 +103,10 @@ public class UserInput : MonoBehaviour
 
         mouseInput.x *= mouseSensivityX;
         mouseInput.y *= mouseSensivityY;
+    }
+
+    private void GetMainAttackInput()
+    {
+        mainAttackInput = Input.GetMouseButton(0);
     }
 }

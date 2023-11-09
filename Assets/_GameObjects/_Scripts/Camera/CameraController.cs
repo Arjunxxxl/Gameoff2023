@@ -19,6 +19,10 @@ public class CameraController : MonoBehaviour
 
     [Header("Pivot Offset Data")]
     [SerializeField] private Vector3 pivotOffSet;
+    [SerializeField] private Vector3 pivotOffSet_Standing;
+    [SerializeField] private Vector3 pivotOffSet_Crouch;
+    [SerializeField] private Vector3 pivotOffSet_Fall;
+    [SerializeField] private Vector3 pivotOffSet_Dash;
     [SerializeField] private float pivotMoveSpeed;
 
     [Header("Pivot Rotation Data")]
@@ -27,7 +31,22 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Vector3 pivotTargetRotation;
     [SerializeField] private float pivotRotationSpeed;
 
-    UserInput userInput;
+    private UserInput userInput;
+
+    #region SingleTon
+    public static CameraController Instance;
+    private void Awake()
+    {
+        if (!Instance)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +54,8 @@ public class CameraController : MonoBehaviour
         userInput = UserInput.Instance;
 
         pivotTargetRotation = pivot.localRotation.eulerAngles;
+
+        SetStandingCameraPivot();
     }
 
     void LateUpdate()
@@ -64,6 +85,26 @@ public class CameraController : MonoBehaviour
     #endregion
 
     #region Pivot
+    public void SetStandingCameraPivot()
+    {
+        pivotOffSet = pivotOffSet_Standing;
+    }
+
+    public void SetCrouchingCameraPivot()
+    {
+        pivotOffSet = pivotOffSet_Crouch;
+    }
+
+    public void SetFallingCameraPivot()
+    {
+        pivotOffSet = pivotOffSet_Fall;
+    }
+
+    public void SetDashingCameraPivot()
+    {
+        pivotOffSet = pivotOffSet_Dash;
+    }
+
     private void UpdatePivotPos()
     {
         pivot.localPosition = Vector3.MoveTowards(pivot.localPosition, pivotOffSet, Time.deltaTime * pivotMoveSpeed);
