@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public PlayerCollisionDetection collisionDetection { get; private set; }
     public PlayerAnimator playerAnimator { get; private set; }
     public WeaponHandler weaponHandler { get; private set; }
+    public TimeController timeController { get; private set; }
 
     public UserInput userInput { get; private set; }
 
@@ -22,6 +23,7 @@ public class Player : MonoBehaviour
         collisionDetection = GetComponent<PlayerCollisionDetection>();
         playerAnimator = GetComponent<PlayerAnimator>();
         weaponHandler = GetComponent<WeaponHandler>();
+        timeController = GetComponent<TimeController>();
     }
 
     // Start is called before the first frame update
@@ -45,6 +47,7 @@ public class Player : MonoBehaviour
         playerAnimator.SetUp();
         playerMovement.SetPlayerActive(isPlayerActive);
         weaponHandler.SetUp(this);
+        timeController.SetUp(this);
     }
 
     public void SetPlayerActive()

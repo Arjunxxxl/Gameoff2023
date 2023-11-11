@@ -33,7 +33,7 @@ public class CameraShake : MonoBehaviour
     private void OnShakeCamera()
     {
         cameraT.DOComplete();
-        cameraT.DOShakePosition(shakeDuration, positionStrength, vibrato, randomness, snapping, fadeout, shakeRandomnessMode);
-        cameraT.DOShakeRotation(shakeDuration, rotationStrength, vibrato, randomness, fadeout, shakeRandomnessMode);
+        cameraT.DOShakePosition(shakeDuration, positionStrength, vibrato, randomness, snapping, fadeout, shakeRandomnessMode).SetUpdate(true);
+        cameraT.DOShakeRotation(shakeDuration, rotationStrength, vibrato, randomness, fadeout, shakeRandomnessMode).SetUpdate(true);
     }
 }

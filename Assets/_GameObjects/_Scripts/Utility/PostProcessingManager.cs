@@ -56,7 +56,7 @@ public class PostProcessingManager : MonoBehaviour
         }
         else
         {
-            currentLensDistortion = Mathf.Lerp(currentLensDistortion, isDash ? dashLensDistortion : normalLensDistortion, 1 - Mathf.Pow(0.5f, Time.deltaTime * lensDistortionChangeSpeed));
+            currentLensDistortion = Mathf.Lerp(currentLensDistortion, isDash ? dashLensDistortion : normalLensDistortion, 1 - Mathf.Pow(0.5f, Time.unscaledDeltaTime * lensDistortionChangeSpeed));
         }
 
         lensDistortion.intensity.value = currentLensDistortion;

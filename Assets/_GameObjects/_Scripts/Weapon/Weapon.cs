@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Weapon : MonoBehaviour
 {
@@ -47,6 +49,9 @@ public class Weapon : MonoBehaviour
     [Header("Tween util")]
     [SerializeField] protected TweenUtil tweenUtil;
 
+    public static Action<int, bool> UpdateCurrentAmmo;
+    public static Action<int, bool> UpdateCarryingAmmo;
+
     protected ObjectPooler objectPooler;
 
     // Start is called before the first frame update
@@ -75,6 +80,7 @@ public class Weapon : MonoBehaviour
         isAttacking = false;
 
         SetUnequipLayer();
+        SetUpAmmo();
     }
 
     public void Equip(Player player)
@@ -108,12 +114,18 @@ public class Weapon : MonoBehaviour
         attacked = false;
         isAttacking = false;
 
+        if(isReloading)
+        {
+            isReloading = false;
+            StopCoroutine("Reload");
+        }
+
         StartCoroutine(ChangeLayerAfterEnquiping());
     }
 
     IEnumerator ChangeLayerAfterEnquiping()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSecondsRealtime(2f);
 
         SetUnequipLayer();
     }
@@ -194,7 +206,7 @@ public class Weapon : MonoBehaviour
             return;
         }
 
-        attackTimeElapsed += Time.deltaTime;
+        attackTimeElapsed += Time.unscaledDeltaTime;
 
         if(attackTimeElapsed > attackDelay)
         {
@@ -254,6 +266,18 @@ public class Weapon : MonoBehaviour
     #endregion
 
     #region Ammo
+    private void SetUpAmmo()
+    {
+        if(IsAmmoWeapon())
+        {
+            ammoLeftInGun = maxAmmoInGun;
+            carryingAmmo = 90;
+
+            UpdateCurrentAmmo?.Invoke(ammoLeftInGun, false);
+            UpdateCarryingAmmo?.Invoke(carryingAmmo, false);
+        }
+    }
+
     private bool IsAmmoWeapon()
     {
         if(weaponType == WeaponType.Rifle)
@@ -276,11 +300,12 @@ public class Weapon : MonoBehaviour
     private void UseAmmo()
     {
         ammoLeftInGun--;
+        UpdateCurrentAmmo?.Invoke(ammoLeftInGun, ammoLeftInGun <= maxAmmoInGun / 3);
     }
 
     public void TryReloading(bool reload)
     {
-        if(!reload || carryingAmmo <= 0 || ammoLeftInGun == maxAmmoInGun)
+        if(!reload || isReloading || carryingAmmo <= 0 || ammoLeftInGun == maxAmmoInGun)
         {
             return;
         }
@@ -294,7 +319,7 @@ public class Weapon : MonoBehaviour
 
     IEnumerator Reload()
     {
-        yield return new WaitForSeconds(reloadTime);
+        yield return new WaitForSecondsRealtime(reloadTime);
 
         int ammoRequire = maxAmmoInGun - ammoLeftInGun;
 
@@ -302,6 +327,9 @@ public class Weapon : MonoBehaviour
 
         ammoLeftInGun += ammoRequire;
         carryingAmmo -= ammoRequire;
+
+        UpdateCarryingAmmo?.Invoke(carryingAmmo, carryingAmmo <= maxAmmoInGun);
+        UpdateCurrentAmmo?.Invoke(ammoLeftInGun, ammoLeftInGun <= maxAmmoInGun / 3);
 
         isReloading = false;
     }

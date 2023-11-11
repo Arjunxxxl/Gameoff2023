@@ -13,7 +13,7 @@ public class AutoDisabler : MonoBehaviour
 
     IEnumerator Disable()
     {
-        yield return new WaitForSeconds(disableDelay);
+        yield return new WaitForSecondsRealtime(disableDelay);
         gameObject.SetActive(false);
     }
 }

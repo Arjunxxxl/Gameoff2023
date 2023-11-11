@@ -47,7 +47,7 @@ public class PlayerCollisionDetection : MonoBehaviour
     {
         if(!isGrounded_Phantom && isGrounded)
         {
-            currentPhantomTimeElapsed += Time.deltaTime;
+            currentPhantomTimeElapsed += Time.unscaledDeltaTime;
             if(currentPhantomTimeElapsed >= phantomTime)
             {
                 currentPhantomTimeElapsed = 0;

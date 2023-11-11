@@ -61,7 +61,7 @@ public class Bullet : MonoBehaviour
 
         if (isMoveToPoint)
         {
-            transform.position = Vector3.MoveTowards(transform.position, destinationPos, moveSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, destinationPos, moveSpeed * Time.unscaledDeltaTime);
 
             if(Vector3.Distance(transform.position, destinationPos) < 0.05f)
             {
@@ -70,7 +70,7 @@ public class Bullet : MonoBehaviour
         }
         else
         {
-            transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
+            transform.Translate(moveDir * moveSpeed * Time.unscaledDeltaTime, Space.World);
         }
     }
     #endregion
@@ -83,7 +83,7 @@ public class Bullet : MonoBehaviour
             return; 
         }
 
-        bulletActiveTimeElapsed += Time.deltaTime;
+        bulletActiveTimeElapsed += Time.unscaledDeltaTime;
 
         if(bulletActiveTimeElapsed >= bulletMaxActiveDuration)
         {

@@ -17,6 +17,9 @@ public class UserInput : MonoBehaviour
     [SerializeField] private float mouseSensivityX;
     [SerializeField] private float mouseSensivityY;
 
+    [Header("Time Scale")]
+    [SerializeField] private bool timeScaleInput;
+
     [Header("Attack")]
     [SerializeField] private bool mainAttackInput;
     [SerializeField] private bool reload;
@@ -26,6 +29,7 @@ public class UserInput : MonoBehaviour
     public Vector3 MouseInputDir { get { return mouseInput; } }
     public bool IsSprinting { get { return isSprinting; } }
     public bool IsCrouching { get { return isCrouching; } }
+    public bool TimeScaleInput { get { return timeScaleInput; } }
     public bool MainAttackInput { get { return mainAttackInput; } }
     public bool Reload { get { return reload; } }
     public bool UnequipWeapon { get { return unEquipWeapon; } }
@@ -65,6 +69,7 @@ public class UserInput : MonoBehaviour
         GetCrouchInput();
 
         MouseInput();
+        GetTimeScaleInput();
 
         GetMainAttackInput();
         GetReloadInput();
@@ -109,6 +114,11 @@ public class UserInput : MonoBehaviour
 
         mouseInput.x *= mouseSensivityX;
         mouseInput.y *= mouseSensivityY;
+    }
+
+    private void GetTimeScaleInput()
+    {
+        timeScaleInput = Input.GetMouseButton(1);
     }
 
     private void GetMainAttackInput()

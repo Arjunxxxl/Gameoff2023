@@ -80,7 +80,7 @@ public class CameraController : MonoBehaviour
     private void Follow()
     {
         followDestination = target.position;
-        transform.position = Vector3.MoveTowards(transform.position, followDestination, Time.deltaTime * followSpeed);
+        transform.position = Vector3.MoveTowards(transform.position, followDestination, Time.unscaledDeltaTime * followSpeed);
     }
 
     private void Rotate()
@@ -89,7 +89,7 @@ public class CameraController : MonoBehaviour
         targetRotation.x = 0;
         targetRotation.z = 0;
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationSpeed);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(targetRotation), Time.unscaledDeltaTime * rotationSpeed);
     }
     #endregion
 
@@ -116,7 +116,7 @@ public class CameraController : MonoBehaviour
 
     private void UpdatePivotPos()
     {
-        pivot.localPosition = Vector3.MoveTowards(pivot.localPosition, pivotOffSet, Time.deltaTime * pivotMoveSpeed);
+        pivot.localPosition = Vector3.MoveTowards(pivot.localPosition, pivotOffSet, Time.unscaledDeltaTime * pivotMoveSpeed);
     }
 
     private void RotatePivot()
@@ -134,7 +134,7 @@ public class CameraController : MonoBehaviour
             pivotTargetRotation.x = maxXRotationAngle;
         }
 
-        pivot.localRotation = Quaternion.Lerp(pivot.localRotation, Quaternion.Euler(pivotTargetRotation), Time.deltaTime * pivotRotationSpeed);
+        pivot.localRotation = Quaternion.Lerp(pivot.localRotation, Quaternion.Euler(pivotTargetRotation), Time.unscaledDeltaTime * pivotRotationSpeed);
     }
     #endregion
 
@@ -147,7 +147,7 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            currentFov = Mathf.Lerp(currentFov, isDash ? dashFov : normalFov, 1 - Mathf.Pow(0.5f, Time.deltaTime * fovChangeSpeed));
+            currentFov = Mathf.Lerp(currentFov, isDash ? dashFov : normalFov, 1 - Mathf.Pow(0.5f, Time.unscaledDeltaTime * fovChangeSpeed));
         }
 
         mainCam.fieldOfView = currentFov;

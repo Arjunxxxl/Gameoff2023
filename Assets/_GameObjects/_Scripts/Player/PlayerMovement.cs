@@ -224,7 +224,7 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = moveSpeedWalk;
         }
 
-        moveSpeed = Mathf.Lerp(moveSpeed, moveSpeedFinal, Time.deltaTime * moveSpeedLerp);
+        moveSpeed = Mathf.Lerp(moveSpeed, moveSpeedFinal, Time.unscaledDeltaTime * moveSpeedLerp);
     }
 
     private void Move()
@@ -234,7 +234,7 @@ public class PlayerMovement : MonoBehaviour
 
         moveDir.y = moveSpeedY;
 
-        characterController.Move(moveDir * Time.deltaTime);
+        characterController.Move(moveDir * Time.unscaledDeltaTime);
     }
     #endregion
 
@@ -270,7 +270,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(jumpActive)
         {
-            jumpActiveTimeElepsed += Time.deltaTime;
+            jumpActiveTimeElepsed += Time.unscaledDeltaTime;
 
             if(jumpActiveTimeElepsed > minJumpActiveDuration && !jump)
             {
@@ -332,13 +332,13 @@ public class PlayerMovement : MonoBehaviour
         {
             if (isDashActive)
             {
-                gravity = Vector3.Lerp(gravity, gravityDash, Time.deltaTime * gravityLerpSpeed);
-                moveSpeedY += gravityDash.y * Time.deltaTime;
+                gravity = Vector3.Lerp(gravity, gravityDash, Time.unscaledDeltaTime * gravityLerpSpeed);
+                moveSpeedY += gravityDash.y * Time.unscaledDeltaTime;
             }
             else
             {
-                gravity = Vector3.Lerp(gravity, gravityNormal, Time.deltaTime * gravityLerpSpeed);
-                moveSpeedY += gravity.y * Time.deltaTime;
+                gravity = Vector3.Lerp(gravity, gravityNormal, Time.unscaledDeltaTime * gravityLerpSpeed);
+                moveSpeedY += gravity.y * Time.unscaledDeltaTime;
             }
         }
         else
@@ -362,14 +362,14 @@ public class PlayerMovement : MonoBehaviour
     #region Rotation
     private void Rotate()
     {
-        rotationSpeed = Mathf.Lerp(rotationSpeed, isGrounded ? rotationSpeedGround : rotationSpeedAir, Time.deltaTime * rotationSpeedChangeLerpSpeed);
+        rotationSpeed = Mathf.Lerp(rotationSpeed, isGrounded ? rotationSpeedGround : rotationSpeedAir, Time.unscaledDeltaTime * rotationSpeedChangeLerpSpeed);
 
         finalRotationAngle = transform.rotation.eulerAngles;
         finalRotationAngle.y += mouseX;
 
         finalRotationAngle.y = Mathf.Repeat(finalRotationAngle.y, 360);
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(finalRotationAngle), Time.deltaTime * rotationSpeed);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(finalRotationAngle), Time.unscaledDeltaTime * rotationSpeed);
     }
     #endregion
 
@@ -385,7 +385,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if(isDashActive)
         {
-            dashActiveTimeElapsed += Time.deltaTime;
+            dashActiveTimeElapsed += Time.unscaledDeltaTime;
 
             cameraController.SetDashingCameraPivot();
 

@@ -75,6 +75,9 @@ public class WeaponHandler : MonoBehaviour
         this.player = player;
 
         carryingWeapons = new List<Weapon>();
+
+        GameplayMenu.EnablePrimaryWeaponUi(false, true);
+        GameplayMenu.EnableBombUi(true);
     }
 
     #region Equip/Unequip
@@ -119,6 +122,10 @@ public class WeaponHandler : MonoBehaviour
                                         + currentEquipedWeapon.transform.up * GetUnEquipingThrow().y +
                                         currentEquipedWeapon.transform.right * GetUnEquipingThrow().x);
 
+            GameplayMenu.EnableShootMarker?.Invoke(false);
+
+            GameplayMenu.EnablePrimaryWeaponUi(false, true);
+
             currentEquipedWeapon = null;
         }
     }
@@ -143,11 +150,11 @@ public class WeaponHandler : MonoBehaviour
                 {
                     currentEquipedWeapon.transform.localPosition = Vector3.MoveTowards(currentEquipedWeapon.transform.localPosition,
                                                                                         weaponTransformData[i].equipLocalPos,
-                                                                                        weaponPosChangeSpeed * Time.deltaTime);
+                                                                                        weaponPosChangeSpeed * Time.unscaledDeltaTime);
 
                     currentEquipedWeapon.transform.localRotation = Quaternion.Lerp(currentEquipedWeapon.transform.localRotation,
                                                                                         Quaternion.Euler(weaponTransformData[i].equipLocalRot),
-                                                                                        weaponRotChangeSpeed * Time.deltaTime);
+                                                                                        weaponRotChangeSpeed * Time.unscaledDeltaTime);
                 }
             }
         }
@@ -171,6 +178,11 @@ public class WeaponHandler : MonoBehaviour
     private void ActivateWeapon()
     {
         currentEquipedWeapon.ActivateWeapon(player.userInput.MainAttackInput);
+
+        if(currentEquipedWeapon.GetWeaponType() == WeaponType.Rifle)
+        {
+            GameplayMenu.EnablePrimaryWeaponUi(true, true);
+        }
     }
 
     private void Reload()
