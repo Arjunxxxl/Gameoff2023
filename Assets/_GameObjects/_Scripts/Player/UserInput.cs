@@ -19,12 +19,16 @@ public class UserInput : MonoBehaviour
 
     [Header("Attack")]
     [SerializeField] private bool mainAttackInput;
+    [SerializeField] private bool reload;
+    [SerializeField] private bool unEquipWeapon;
 
     public Vector3 UserInputDir { get { return input; } }
     public Vector3 MouseInputDir { get { return mouseInput; } }
     public bool IsSprinting { get { return isSprinting; } }
     public bool IsCrouching { get { return isCrouching; } }
     public bool MainAttackInput { get { return mainAttackInput; } }
+    public bool Reload { get { return reload; } }
+    public bool UnequipWeapon { get { return unEquipWeapon; } }
 
     #region SingleTon
     public static UserInput Instance;
@@ -63,6 +67,8 @@ public class UserInput : MonoBehaviour
         MouseInput();
 
         GetMainAttackInput();
+        GetReloadInput();
+        GetWeaponUnequipInput();
     }
 
     public void SetUserInputActive(bool isActive)
@@ -83,7 +89,7 @@ public class UserInput : MonoBehaviour
 
     private void GetSprintInput()
     {
-        isSprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        isSprinting = !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
     }
 
     private void GetCrouchInput()
@@ -108,5 +114,15 @@ public class UserInput : MonoBehaviour
     private void GetMainAttackInput()
     {
         mainAttackInput = Input.GetMouseButton(0);
+    }
+
+    private void GetReloadInput()
+    {
+        reload = Input.GetKeyDown(KeyCode.R);
+    }
+
+    private void GetWeaponUnequipInput()
+    {
+        unEquipWeapon = Input.GetKeyDown(KeyCode.F);
     }
 }

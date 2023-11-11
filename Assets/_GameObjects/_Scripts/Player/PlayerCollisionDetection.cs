@@ -57,6 +57,17 @@ public class PlayerCollisionDetection : MonoBehaviour
     }
     #endregion
 
+    #region Trigger Collision
+    private void OnTriggerEnter(Collider other)
+    {
+        switch(other.tag)
+        {
+            case "Weapon":
+                WeaponHandler.EquipWeapon?.Invoke(other.GetComponent<Weapon>());
+                break;
+        }
+    }
+    #endregion
 
     #region Debugging
     private void OnDrawGizmos()

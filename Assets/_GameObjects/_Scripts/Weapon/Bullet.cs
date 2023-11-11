@@ -8,8 +8,10 @@ public class Bullet : MonoBehaviour
     [SerializeField] private bool isBulletActive;
 
     [Header("Bullet Movement Data")]
+    [SerializeField] private bool isMoveToPoint;
     [SerializeField] private float moveSpeed;
     [SerializeField] private Vector3 moveDir;
+    [SerializeField] private Vector3 destinationPos;
 
     [Header("Bullet Active Duration")]
     [SerializeField] private float bulletMaxActiveDuration;
@@ -22,14 +24,34 @@ public class Bullet : MonoBehaviour
         UpdateBulletActiveDuration();
     }
 
-    public void ActivateBullet()
+    #region SetUp
+    public void ActivateBullet(bool isMoveToPoint, Vector3 destinationPos)
     {
+        this.isMoveToPoint = isMoveToPoint;
+
+        if (isMoveToPoint)
+        {
+            this.destinationPos = destinationPos;
+        }
+        else
+        {
+            moveDir = transform.forward;
+        }
+
         isBulletActive = true;
         bulletActiveTimeElapsed = 0;
-
-        moveDir = transform.forward;
     }
 
+    private void DeactivateBullet()
+    {
+        bulletActiveTimeElapsed = 0;
+        isBulletActive = false;
+
+        gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region Movement
     private void MoveBullet()
     {
         if(!isBulletActive)
@@ -37,9 +59,23 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
-    }
+        if (isMoveToPoint)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, destinationPos, moveSpeed * Time.deltaTime);
 
+            if(Vector3.Distance(transform.position, destinationPos) < 0.05f)
+            {
+                DeactivateBullet();
+            }
+        }
+        else
+        {
+            transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
+        }
+    }
+    #endregion
+
+    #region Time Active Duration
     private void UpdateBulletActiveDuration()
     { 
         if(!isBulletActive) 
@@ -51,10 +87,8 @@ public class Bullet : MonoBehaviour
 
         if(bulletActiveTimeElapsed >= bulletMaxActiveDuration)
         {
-            bulletActiveTimeElapsed = 0;
-            isBulletActive = false;
-
-            gameObject.SetActive(false);
+            DeactivateBullet();
         }
     }
+    #endregion
 }

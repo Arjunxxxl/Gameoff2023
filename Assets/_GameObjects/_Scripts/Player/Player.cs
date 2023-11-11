@@ -7,13 +7,13 @@ public class Player : MonoBehaviour
     [Header("Data")]
     [SerializeField] private bool isPlayerActive;
 
-    [Header("Refs")]
-    [SerializeField] private CharacterController characterController;
-    [SerializeField] private UserInput userInput;
-    [SerializeField] private PlayerMovement playerMovement;
-    [SerializeField] private PlayerCollisionDetection collisionDetection;
-    [SerializeField] private PlayerAnimator playerAnimator;
-    [SerializeField] private WeaponHandler weaponHandler;
+    public CharacterController characterController { get; private set; }
+    public PlayerMovement playerMovement { get; private set; }
+    public PlayerCollisionDetection collisionDetection { get; private set; }
+    public PlayerAnimator playerAnimator { get; private set; }
+    public WeaponHandler weaponHandler { get; private set; }
+
+    public UserInput userInput { get; private set; }
 
     private void Awake()
     {
@@ -42,8 +42,9 @@ public class Player : MonoBehaviour
         userInput.SetUserInputActive(isPlayerActive);
 
         playerMovement.SetUp(characterController, userInput, collisionDetection, playerAnimator);
+        playerAnimator.SetUp();
         playerMovement.SetPlayerActive(isPlayerActive);
-        weaponHandler.SetUp(this, userInput, collisionDetection);
+        weaponHandler.SetUp(this);
     }
 
     public void SetPlayerActive()

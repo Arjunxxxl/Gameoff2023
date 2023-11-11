@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private Transform target;
     [SerializeField] private Transform pivot;
-    [SerializeField] private Camera cam;
+    [SerializeField] private Camera mainCam;
 
     [Header("Follow Data")]
     [SerializeField] private Vector3 followDestination;
@@ -30,6 +31,12 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float maxXRotationAngle;
     [SerializeField] private Vector3 pivotTargetRotation;
     [SerializeField] private float pivotRotationSpeed;
+
+    [Header("FOV")]
+    [SerializeField] private float currentFov;
+    [SerializeField] private float dashFov;
+    [SerializeField] private float normalFov;
+    [SerializeField] private float fovChangeSpeed;
 
     private UserInput userInput;
 
@@ -56,6 +63,8 @@ public class CameraController : MonoBehaviour
         pivotTargetRotation = pivot.localRotation.eulerAngles;
 
         SetStandingCameraPivot();
+
+        SetCameraFOV(false, true);
     }
 
     void LateUpdate()
@@ -126,6 +135,22 @@ public class CameraController : MonoBehaviour
         }
 
         pivot.localRotation = Quaternion.Lerp(pivot.localRotation, Quaternion.Euler(pivotTargetRotation), Time.deltaTime * pivotRotationSpeed);
+    }
+    #endregion
+
+    #region FOV
+    public void SetCameraFOV(bool isDash, bool isInstant)
+    {
+        if (isInstant)
+        {
+            currentFov = isDash ? dashFov : normalFov;
+        }
+        else
+        {
+            currentFov = Mathf.Lerp(currentFov, isDash ? dashFov : normalFov, 1 - Mathf.Pow(0.5f, Time.deltaTime * fovChangeSpeed));
+        }
+
+        mainCam.fieldOfView = currentFov;
     }
     #endregion
 }

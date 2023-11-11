@@ -72,17 +72,21 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector3 characterControllerCenter_Crouch;
     [SerializeField] private Vector3 characterControllerCenter_Stanting;
 
+    public float MoveSpeedFinal { get { return moveSpeedFinal; } }
+
     private CharacterController characterController;
     private UserInput userInput;
     private PlayerCollisionDetection collisionDetection;
     private PlayerAnimator playerAnimator;
 
     private CameraController cameraController;
+    private PostProcessingManager postProcessingManager;
 
     // Start is called before the first frame update
     void Start()
     {
         cameraController = CameraController.Instance;
+        postProcessingManager = PostProcessingManager.Instance;
     }
 
     // Update is called once per frame
@@ -122,6 +126,8 @@ public class PlayerMovement : MonoBehaviour
         gravity = gravityMinimun;
 
         cameraController.SetStandingCameraPivot();
+
+        postProcessingManager.SetLensDistortion(false, true);
     }
 
     public void SetPlayerActive(bool isPlayerActive)
@@ -371,7 +377,8 @@ public class PlayerMovement : MonoBehaviour
     private void SetDashActive()
     {
         isDashActive = true;
-        playerAnimator.SetDarhAnimation(isDashActive);
+        playerAnimator.SetDashAnimation(isDashActive);
+        playerAnimator.PlayDashEffect(isDashActive);
     }
 
     private void Dash()
@@ -386,9 +393,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 dashActiveTimeElapsed = 0;
                 isDashActive = false;
-                playerAnimator.SetDarhAnimation(isDashActive);
+                playerAnimator.SetDashAnimation(isDashActive);
+                playerAnimator.PlayDashEffect(isDashActive);
             }
         }
+
+        postProcessingManager.SetLensDistortion(isDashActive, false);
+        cameraController.SetCameraFOV(isDashActive, false);
     }
     #endregion
 

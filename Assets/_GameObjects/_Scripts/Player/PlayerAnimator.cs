@@ -11,6 +11,9 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private string RUNNING;
     [SerializeField] private string DASH;
 
+    [Header("Particle System")]
+    [SerializeField] private ParticleSystem dashEffect;
+
     [Space]
     [SerializeField] private Animator anim;
 
@@ -20,6 +23,12 @@ public class PlayerAnimator : MonoBehaviour
         
     }
 
+    public void SetUp()
+    {
+        PlayDashEffect(false);
+    }
+
+    #region Animations
     public void SetStandingAnimation(bool active)
     {
         anim.SetBool(STAND, active);
@@ -35,7 +44,7 @@ public class PlayerAnimator : MonoBehaviour
         anim.SetBool(FALL, isActive);
     }
 
-    public void SetDarhAnimation(bool isActive)
+    public void SetDashAnimation(bool isActive)
     {
         anim.SetBool(DASH, isActive);
     }
@@ -44,4 +53,19 @@ public class PlayerAnimator : MonoBehaviour
     {
         anim.SetFloat(RUNNING, val);
     }
+    #endregion
+
+    #region Particle Effect
+    public void PlayDashEffect(bool play)
+    {
+        if(play)
+        {
+            dashEffect.Play();
+        }
+        else
+        {
+            dashEffect.Stop();
+        }
+    }
+    #endregion
 }

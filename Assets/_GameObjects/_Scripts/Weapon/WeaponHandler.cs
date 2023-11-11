@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,18 +13,18 @@ public class WeaponHandler : MonoBehaviour
         public WeaponType weaponType;
         [Space]
         public Vector3 equipLocalPos;
-        [Space]
         public Vector3 equipLocalRot;
         [Space]
         public Vector3 unequipLocalPos;
-        [Space]
         public Vector3 unequipLocalRot;
+        [Space]
+        public Vector3 unEquipingThrowForce;
     }
 
     [Header("Weapon Carrying Data")]
     [SerializeField] private WeaponType currentEquipedWeaponType;
     [SerializeField] private Weapon currentEquipedWeapon;
-    [SerializeField] private List<WeaponType> carryingWeapons;
+    [SerializeField] private List<Weapon> carryingWeapons;
 
     [Header("Weapon Equip/Unequip Data")]
     [SerializeField] private Transform weaponEquipParent;
@@ -33,8 +35,19 @@ public class WeaponHandler : MonoBehaviour
     [SerializeField] private float weaponRotChangeSpeed;
     [SerializeField] private List<WeaponTransformData> weaponTransformData;
 
-    private UserInput userInput;
-    private PlayerCollisionDetection playerCollisionDetection;
+    private Player player;
+
+    public static Action<Weapon> EquipWeapon;
+
+    private void OnEnable()
+    {
+        EquipWeapon += SetWeaponEquiped;
+    }
+
+    private void OnDisable()
+    {
+        EquipWeapon -= SetWeaponEquiped;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -44,31 +57,70 @@ public class WeaponHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ActivateWeapon();
+        if(currentEquipedWeapon == null)
+        {
+            return;
+        }
+
         UpdateEquipWeaponTransform();
+
+        ActivateWeapon();
+        Reload();
+
+        UnequipWeapon();
     }
 
-    public void SetUp(Player player, UserInput userInput, PlayerCollisionDetection playerCollisionDetection)
+    public void SetUp(Player player)
     {
-        this.userInput = userInput;
-        this.playerCollisionDetection = playerCollisionDetection;
+        this.player = player;
 
-        carryingWeapons = new List<WeaponType>();
-
-        SetWeaponEquiped(player, currentEquipedWeapon);
-        UpdateEquipWeaponTransform(true);
+        carryingWeapons = new List<Weapon>();
     }
 
     #region Equip/Unequip
-    private void SetWeaponEquiped(Player player, Weapon weapon)
+    private void SetWeaponEquiped(Weapon weapon)
     {
+        if(currentEquipedWeapon == weapon)
+        {
+            return;
+        }
+
         currentEquipedWeaponType = weapon.GetWeaponType();
         currentEquipedWeapon = weapon;
 
-        weapon.SetUp(player);
+        weapon.Equip(player);
         weapon.SetNewParent(weaponEquipParent);
 
-        carryingWeapons.Add(weapon.GetWeaponType());
+        if (!carryingWeapons.Contains(weapon))
+        {
+            carryingWeapons.Add(weapon);
+        }
+
+        UpdateEquipWeaponTransform(true);
+    }
+
+    private void UnequipWeapon()
+    {
+        if (player.userInput.UnequipWeapon)
+        {
+            if (currentEquipedWeapon == null)
+            {
+                return;
+            }
+
+            if (carryingWeapons.Contains(currentEquipedWeapon))
+            {
+                carryingWeapons.Remove(currentEquipedWeapon);
+            }
+
+            currentEquipedWeapon.transform.SetParent(null);
+
+            currentEquipedWeapon.Unequip(currentEquipedWeapon.transform.forward * (GetUnEquipingThrow().z  + player.playerMovement.MoveSpeedFinal / 2)
+                                        + currentEquipedWeapon.transform.up * GetUnEquipingThrow().y +
+                                        currentEquipedWeapon.transform.right * GetUnEquipingThrow().x);
+
+            currentEquipedWeapon = null;
+        }
     }
 
     private void UpdateEquipWeaponTransform(bool isInstantUpdation = false)
@@ -100,12 +152,30 @@ public class WeaponHandler : MonoBehaviour
             }
         }
     }
+
+    private Vector3 GetUnEquipingThrow()
+    {
+        for (int i = 0; i < weaponTransformData.Count; i++)
+        {
+            if (weaponTransformData[i].weaponType == currentEquipedWeapon.GetWeaponType())
+            {
+                return weaponTransformData[i].unEquipingThrowForce;
+            }
+        }
+
+        return Vector3.zero;
+    }
     #endregion
 
     #region Attack
     private void ActivateWeapon()
     {
-        currentEquipedWeapon.ActivateWeapon(userInput.MainAttackInput);
+        currentEquipedWeapon.ActivateWeapon(player.userInput.MainAttackInput);
+    }
+
+    private void Reload()
+    {
+        currentEquipedWeapon.TryReloading(player.userInput.Reload);
     }
     #endregion
 }
