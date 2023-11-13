@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,13 +6,23 @@ using UnityEngine;
 public class TimeController : MonoBehaviour
 {
     [Header("Time Scale")]
+    [SerializeField] private bool slowTime;
     [SerializeField] private float currentTimeScale;
     [SerializeField] private float normalTimeScale;
     [SerializeField] private float stopingTimeScale;
     [SerializeField] private float fixedDeltaTimeDefaultValue;
     [SerializeField] private float timeScaleChangeSpeed;
 
+    [Header("Time Slow Energy")]
+    [SerializeField] private bool isNoEnergyLeft;
+    [SerializeField] private float maxEnergy;
+    [SerializeField] private float energyBurnRate;
+    [SerializeField] private float energyGenerateRate;
+    [SerializeField] private float energLeft;
+
     private Player player;
+
+    public static Action<float, float, float> UpdateEnergy;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +33,8 @@ public class TimeController : MonoBehaviour
     void Update()
     {
         ChangeTimeScale();
+        BurnEnergy();
+        GenerateEnergy();
     }
 
     public void SetUp(Player player)
@@ -31,13 +44,19 @@ public class TimeController : MonoBehaviour
         currentTimeScale = normalTimeScale;
         Time.timeScale = currentTimeScale;
         Time.fixedDeltaTime = Time.timeScale * fixedDeltaTimeDefaultValue;
+
+        energLeft = maxEnergy;
+        isNoEnergyLeft = false;
     }
 
+    #region Time Slow
     private void ChangeTimeScale()
     {
-        currentTimeScale = Mathf.Lerp(currentTimeScale, player.userInput.TimeScaleInput ? stopingTimeScale : normalTimeScale, 1f - Mathf.Pow(0.5f, Time.unscaledDeltaTime * timeScaleChangeSpeed));
+        slowTime = player.userInput.TimeScaleInput;
+
+        currentTimeScale = Mathf.Lerp(currentTimeScale, slowTime && !isNoEnergyLeft ? stopingTimeScale : normalTimeScale, 1f - Mathf.Pow(0.5f, Time.unscaledDeltaTime * timeScaleChangeSpeed));
         
-        if(player.userInput.TimeScaleInput)
+        if(slowTime && !isNoEnergyLeft)
         {
             if(Mathf.Abs(currentTimeScale - stopingTimeScale) < 0.01f)
             {
@@ -55,4 +74,41 @@ public class TimeController : MonoBehaviour
         Time.timeScale = currentTimeScale;
         Time.fixedDeltaTime = Time.timeScale * fixedDeltaTimeDefaultValue;
     }
+    #endregion
+
+    #region Time Slow Energy
+    private void BurnEnergy()
+    {
+        if (slowTime && energLeft > 0)
+        {
+            energLeft -= Time.unscaledDeltaTime * energyBurnRate;
+
+            isNoEnergyLeft = energLeft <= 0;
+
+            if (energLeft <= 0)
+            {
+                energLeft = 0;
+            }
+
+            UpdateEnergy?.Invoke(energLeft, 0, maxEnergy);
+        }
+    }
+
+    private void GenerateEnergy()
+    {
+        if (!slowTime && energLeft < maxEnergy)
+        {
+            energLeft += Time.unscaledDeltaTime * energyGenerateRate;
+
+            isNoEnergyLeft = energLeft <= 0;
+
+            if (energLeft >= maxEnergy)
+            {
+                energLeft = maxEnergy;
+            }
+
+            UpdateEnergy?.Invoke(energLeft, 0, maxEnergy);
+        }
+    }
+    #endregion
 }

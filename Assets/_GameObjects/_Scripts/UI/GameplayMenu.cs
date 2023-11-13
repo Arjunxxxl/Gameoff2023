@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class GameplayMenu : MonoBehaviour
 {
@@ -23,8 +25,12 @@ public class GameplayMenu : MonoBehaviour
     [SerializeField] private Color ammoNormalColor;
     [SerializeField] private Color ammoLowColor;
 
+    [Header("Energy Slider")]
+    [SerializeField] private Slider energySlider;
+
     [Header("Animations")]
     [SerializeField] private TweenUtil currentAmmoTween;
+    [SerializeField] private TweenUtil bombTxtTween;
 
     public static Action<bool> EnableShootMarker;
     public static Action<bool, bool> EnablePrimaryWeaponUi;
@@ -34,6 +40,11 @@ public class GameplayMenu : MonoBehaviour
     {
         Weapon.UpdateCurrentAmmo += UpdateCurrentAmmo;
         Weapon.UpdateCarryingAmmo += UpdateCarryingAmmo;
+        WeaponHandler.UpdateGrenadeCount += UpdateGrenadeCount;
+
+        TimeController.UpdateEnergy += UpdateEnergySlider;
+
+        PlyaerHp.UpdateCurrentHp += UpdateHp;
 
         EnableShootMarker += OnEnableHitIndicator;
         EnablePrimaryWeaponUi += OnEnablePrimaryWeaponUi;
@@ -44,6 +55,11 @@ public class GameplayMenu : MonoBehaviour
     {
         Weapon.UpdateCurrentAmmo -= UpdateCurrentAmmo;
         Weapon.UpdateCarryingAmmo -= UpdateCarryingAmmo;
+        WeaponHandler.UpdateGrenadeCount -= UpdateGrenadeCount;
+
+        TimeController.UpdateEnergy -= UpdateEnergySlider;
+
+        PlyaerHp.UpdateCurrentHp -= UpdateHp;
 
         EnableShootMarker -= OnEnableHitIndicator;
         EnablePrimaryWeaponUi -= OnEnablePrimaryWeaponUi;
@@ -110,6 +126,32 @@ public class GameplayMenu : MonoBehaviour
         carryingAmmoTxt.text = "(" + value.ToString() + ")";
 
         carryingAmmoTxt.color = isLowAmmo ? ammoLowColor : ammoNormalColor;
+    }
+    #endregion
+
+    #region Grenade
+    private void UpdateGrenadeCount(int value, bool isLowAmmo)
+    {
+        bombTxtTween.PlayTween("Scale Up");
+        bombTxt.text = value.ToString();
+
+        bombTxt.color = isLowAmmo ? ammoLowColor : ammoNormalColor;
+    }
+    #endregion
+
+    #region Energy Slider
+    private void UpdateEnergySlider(float sliderValue, float sliderMinValue, float sliderMaxValue)
+    {
+        energySlider.minValue = sliderMinValue;
+        energySlider.maxValue = sliderMaxValue;
+        energySlider.value = sliderValue;
+    }
+    #endregion
+
+    #region Hp
+    private void UpdateHp(int hpLeft)
+    {
+        hpTxt.text = hpLeft.ToString();
     }
     #endregion
 }

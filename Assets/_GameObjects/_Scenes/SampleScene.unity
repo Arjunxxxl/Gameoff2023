@@ -427,6 +427,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 273760507}
   m_CullTransparentMesh: 1
+--- !u!1 &352767337
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 352767338}
+  m_Layer: 8
+  m_Name: GrenadeSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &352767338
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352767337}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.4, y: 0.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1101190686}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &361625701
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,6 +534,7 @@ MonoBehaviour:
   mainAttackInput: 0
   reload: 0
   unEquipWeapon: 0
+  grenadeInput: 0
 --- !u!4 &393593154
 Transform:
   m_ObjectHideFlags: 0
@@ -1584,7 +1616,9 @@ MonoBehaviour:
   hpTxt: {fileID: 1203406216}
   ammoNormalColor: {r: 1, g: 1, b: 1, a: 1}
   ammoLowColor: {r: 0.6039216, g: 0, b: 0, a: 1}
+  energySlider: {fileID: 1565044959}
   currentAmmoTween: {fileID: 1533399828}
+  bombTxtTween: {fileID: 2043967211}
 --- !u!1 &616361504
 GameObject:
   m_ObjectHideFlags: 0
@@ -3138,10 +3172,12 @@ GameObject:
   - component: {fileID: 1101190690}
   - component: {fileID: 1101190689}
   - component: {fileID: 1101190688}
+  - component: {fileID: 1101190695}
   - component: {fileID: 1101190687}
   - component: {fileID: 1101190692}
-  - component: {fileID: 1101190693}
   - component: {fileID: 1101190694}
+  - component: {fileID: 1101190693}
+  - component: {fileID: 1101190696}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3213,6 +3249,7 @@ Transform:
   m_Children:
   - {fileID: 1552422376}
   - {fileID: 1820685584}
+  - {fileID: 352767338}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3400,6 +3437,8 @@ MonoBehaviour:
     unequipLocalPos: {x: 0, y: 0, z: 0}
     unequipLocalRot: {x: 0, y: 0, z: 0}
     unEquipingThrowForce: {x: 0, y: 5, z: 2.5}
+  grenadeSpawnT: {fileID: 352767338}
+  carryingGrenade: 10
 --- !u!114 &1101190694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3412,11 +3451,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 262300c83326ea24797d1a38341eea68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slowTime: 0
   currentTimeScale: 0
   normalTimeScale: 1
   stopingTimeScale: 0.25
   fixedDeltaTimeDefaultValue: 0.02
   timeScaleChangeSpeed: 5
+  isNoEnergyLeft: 0
+  maxEnergy: 10
+  energyBurnRate: 1
+  energyGenerateRate: 0.75
+  energLeft: 0
+--- !u!114 &1101190695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101190682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d72a1a1a57a2f14096c37135ab5e2b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDead: 0
+  maxHp: 100
+  currentHp: 0
+--- !u!114 &1101190696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101190682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4185b4edbc846244fbf4920a8837c5e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 4204749786865541258}
+  crosshairRectT: {fileID: 1685305632}
+  rayDist: 1000
+  hitLayer:
+    serializedVersion: 2
+    m_Bits: 3319
+  hitPoint: {x: 0, y: 0, z: 0}
+  isHit: 0
 --- !u!1 &1141970753
 GameObject:
   m_ObjectHideFlags: 0
@@ -5960,6 +6040,12 @@ MonoBehaviour:
   - tag: ShellEject1
     prefab: {fileID: 1822961243351976, guid: 059c6bc0c88d9e44c98a815958888e74, type: 3}
     size: 50
+  - tag: Grenade
+    prefab: {fileID: 661860755960191976, guid: 837e9ef877102f24abab2a5f6c653f6d, type: 3}
+    size: 20
+  - tag: GrenadeExplosionEffect
+    prefab: {fileID: 1829163952570794, guid: f171ac3dbb620c44e81cd88ddee1cbbd, type: 3}
+    size: 20
 --- !u!4 &1609478696
 Transform:
   m_ObjectHideFlags: 0
@@ -12657,6 +12743,7 @@ GameObject:
   - component: {fileID: 2043967208}
   - component: {fileID: 2043967210}
   - component: {fileID: 2043967209}
+  - component: {fileID: 2043967211}
   m_Layer: 5
   m_Name: Bomb Value Txt
   m_TagString: Untagged
@@ -12781,6 +12868,226 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2043967207}
   m_CullTransparentMesh: 1
+--- !u!114 &2043967211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043967207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 836b9069d33175d4789d6c66429da32e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canPlayMultipleTween: 0
+  waitForTweenToComplete: 1
+  disableGameObjectOnComplete: 0
+  tweenCollection:
+  - tweenName: Scale Up
+    tweenType: 2
+    useTweenInitialValue: 1
+    useUnscaledTime: 1
+    tdMove:
+      isLocalSpace: 0
+      tweenStartValue: {x: 0, y: 0, z: 0}
+      tweenEndValue: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      isSnapping: 0
+      numOfJumps: 0
+      jumpPower: 0
+      easeType: 0
+    tdRotate:
+      isLocalSpace: 0
+      tweenStartValue: {x: 0, y: 0, z: 0}
+      tweenEndValue: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      rotateMode: 0
+      easeType: 0
+    tdScale:
+      tweenStartValue: {x: 1, y: 1, z: 1}
+      tweenEndValue: {x: 1.5, y: 1.5, z: 1}
+      tweenDuration: 0.1
+      tweenDelay: 0
+      easeType: 7
+    tdPunch:
+      type: 0
+      puch: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      vibrato: 0
+      elasticity: 0
+      isSnapping: 0
+      easeType: 0
+    tdShake:
+      type: 0
+      strength: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      vibrato: 0
+      randomness: 0
+      isSnapping: 0
+      fadeOut: 0
+      shakeRandomnessMode: 0
+      easeType: 0
+    tdPath:
+      isLocalSpace: 0
+      waypoints: []
+      tweenDuration: 0
+      tweenDelay: 0
+      pathType: 0
+      pathMode: 0
+      resolution: 0
+      gizmoColor: {r: 0, g: 0, b: 0, a: 0}
+      easeType: 0
+    tdSpriteRendererColor:
+      tweenStartValue: {r: 0, g: 0, b: 0, a: 0}
+      tweenEndValue: {r: 0, g: 0, b: 0, a: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      easeType: 0
+    tdSpriteRendererFade:
+      tweenStartValue: 0
+      tweenEndValue: 0
+      tweenDuration: 0
+      tweenDelay: 0
+      easeType: 0
+    tdMaterialColor:
+      tweenEndValue: {r: 0, g: 0, b: 0, a: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      easeType: 0
+    tdMaterialFade:
+      tweenEndValue: 0
+      tweenDuration: 0
+      tweenDelay: 0
+      easeType: 0
+    tdRectOffset:
+      minoffsetStartValue: {x: 0, y: 0, z: 0}
+      maxoffsetStartValue: {x: 0, y: 0, z: 0}
+      minoffsetEndValue: {x: 0, y: 0, z: 0}
+      maxoffsetEndValue: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      isSnapping: 0
+      easeType: 0
+    tweenEvent: 2
+    OnStart:
+      m_PersistentCalls:
+        m_Calls: []
+    OnComplete:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2043967211}
+          m_TargetAssemblyTypeName: TweenUtil, Assembly-CSharp
+          m_MethodName: PlayTween
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: Scale Down
+            m_BoolArgument: 0
+          m_CallState: 2
+  - tweenName: Scale Down
+    tweenType: 2
+    useTweenInitialValue: 1
+    useUnscaledTime: 1
+    tdMove:
+      isLocalSpace: 0
+      tweenStartValue: {x: 1, y: 1, z: 1}
+      tweenEndValue: {x: 1.5, y: 1.5, z: 1}
+      tweenDuration: 0.1
+      tweenDelay: 0
+      isSnapping: 0
+      numOfJumps: 0
+      jumpPower: 0
+      easeType: 0
+    tdRotate:
+      isLocalSpace: 0
+      tweenStartValue: {x: 0, y: 0, z: 0}
+      tweenEndValue: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      rotateMode: 0
+      easeType: 0
+    tdScale:
+      tweenStartValue: {x: 1.5, y: 1.5, z: 1}
+      tweenEndValue: {x: 1, y: 1, z: 1}
+      tweenDuration: 0.1
+      tweenDelay: 0
+      easeType: 7
+    tdPunch:
+      type: 0
+      puch: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      vibrato: 0
+      elasticity: 0
+      isSnapping: 0
+      easeType: 0
+    tdShake:
+      type: 0
+      strength: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      vibrato: 0
+      randomness: 0
+      isSnapping: 0
+      fadeOut: 0
+      shakeRandomnessMode: 0
+      easeType: 0
+    tdPath:
+      isLocalSpace: 0
+      waypoints: []
+      tweenDuration: 0
+      tweenDelay: 0
+      pathType: 0
+      pathMode: 0
+      resolution: 0
+      gizmoColor: {r: 0, g: 0, b: 0, a: 0}
+      easeType: 0
+    tdSpriteRendererColor:
+      tweenStartValue: {r: 0, g: 0, b: 0, a: 0}
+      tweenEndValue: {r: 0, g: 0, b: 0, a: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      easeType: 0
+    tdSpriteRendererFade:
+      tweenStartValue: 0
+      tweenEndValue: 0
+      tweenDuration: 0
+      tweenDelay: 0
+      easeType: 0
+    tdMaterialColor:
+      tweenEndValue: {r: 0, g: 0, b: 0, a: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      easeType: 0
+    tdMaterialFade:
+      tweenEndValue: 0
+      tweenDuration: 0
+      tweenDelay: 0
+      easeType: 0
+    tdRectOffset:
+      minoffsetStartValue: {x: 0, y: 0, z: 0}
+      maxoffsetStartValue: {x: 0, y: 0, z: 0}
+      minoffsetEndValue: {x: 0, y: 0, z: 0}
+      maxoffsetEndValue: {x: 0, y: 0, z: 0}
+      tweenDuration: 0
+      tweenDelay: 0
+      isSnapping: 0
+      easeType: 0
+    tweenEvent: 2
+    OnStart:
+      m_PersistentCalls:
+        m_Calls: []
+    OnComplete:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!1001 &2073202049
 PrefabInstance:
   m_ObjectHideFlags: 0

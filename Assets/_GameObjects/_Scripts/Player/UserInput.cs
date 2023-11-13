@@ -24,6 +24,7 @@ public class UserInput : MonoBehaviour
     [SerializeField] private bool mainAttackInput;
     [SerializeField] private bool reload;
     [SerializeField] private bool unEquipWeapon;
+    [SerializeField] private bool grenadeInput;
 
     public Vector3 UserInputDir { get { return input; } }
     public Vector3 MouseInputDir { get { return mouseInput; } }
@@ -33,6 +34,7 @@ public class UserInput : MonoBehaviour
     public bool MainAttackInput { get { return mainAttackInput; } }
     public bool Reload { get { return reload; } }
     public bool UnequipWeapon { get { return unEquipWeapon; } }
+    public bool GrenadeInput { get { return grenadeInput; } }
 
     #region SingleTon
     public static UserInput Instance;
@@ -74,6 +76,8 @@ public class UserInput : MonoBehaviour
         GetMainAttackInput();
         GetReloadInput();
         GetWeaponUnequipInput();
+
+        GetGrenadeInput();
     }
 
     public void SetUserInputActive(bool isActive)
@@ -134,5 +138,10 @@ public class UserInput : MonoBehaviour
     private void GetWeaponUnequipInput()
     {
         unEquipWeapon = Input.GetKeyDown(KeyCode.F);
+    }
+
+    private void GetGrenadeInput()
+    {
+        grenadeInput = Input.GetKeyDown(KeyCode.Q);
     }
 }

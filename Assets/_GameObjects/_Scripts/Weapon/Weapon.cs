@@ -98,11 +98,15 @@ public class Weapon : MonoBehaviour
         attacked = false;
         isAttacking = false;
 
+        GameplayMenu.EnableShootMarker?.Invoke(true);
+
         SetEquipLayer();
     }
 
     public void Unequip(Vector3 throwForce)
     {
+        player = null;
+
         detectionCollider.enabled = true;
         collisionCollider.enabled = true;
         collisionRigidbody.isKinematic = false;

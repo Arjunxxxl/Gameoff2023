@@ -35,9 +35,14 @@ public class WeaponHandler : MonoBehaviour
     [SerializeField] private float weaponRotChangeSpeed;
     [SerializeField] private List<WeaponTransformData> weaponTransformData;
 
+    [Header("Grenade")]
+    [SerializeField] private Transform grenadeSpawnT;
+    [SerializeField] private int carryingGrenade;
+
     private Player player;
 
     public static Action<Weapon> EquipWeapon;
+    public static Action<int, bool> UpdateGrenadeCount;
 
     private void OnEnable()
     {
@@ -57,7 +62,9 @@ public class WeaponHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(currentEquipedWeapon == null)
+        ThrowGrenade();
+
+        if (currentEquipedWeapon == null)
         {
             return;
         }
@@ -77,7 +84,7 @@ public class WeaponHandler : MonoBehaviour
         carryingWeapons = new List<Weapon>();
 
         GameplayMenu.EnablePrimaryWeaponUi(false, true);
-        GameplayMenu.EnableBombUi(true);
+        SetUpGrenade();
     }
 
     #region Equip/Unequip
@@ -188,6 +195,32 @@ public class WeaponHandler : MonoBehaviour
     private void Reload()
     {
         currentEquipedWeapon.TryReloading(player.userInput.Reload);
+    }
+    #endregion
+
+    #region Grenade
+    private void SetUpGrenade()
+    {
+        GameplayMenu.EnableBombUi(carryingGrenade > 0);
+        UpdateGrenadeCount?.Invoke(carryingGrenade, carryingGrenade <= 3);
+    }
+
+    private void ThrowGrenade()
+    {
+        if(player.userInput.GrenadeInput && carryingGrenade > 0)
+        {
+            GameObject obj = player.objectPooler.SpawnFormPool("Grenade", grenadeSpawnT.position, Quaternion.identity);
+            obj.GetComponent<Grenade>().ActivateGrenade(player.shootingManager.IsHit, weaponEquipParent.forward, player.shootingManager.HitPoint, player.playerMovement.MoveSpeedFinal);
+
+            carryingGrenade--;
+
+            if(carryingGrenade < 0)
+            {
+                carryingGrenade = 0;
+            }
+
+            UpdateGrenadeCount?.Invoke(carryingGrenade, carryingGrenade <= 3);
+        }
     }
     #endregion
 }

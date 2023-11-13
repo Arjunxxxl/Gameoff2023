@@ -217,7 +217,8 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (isRunning && !isJumping)
         {
-            moveSpeedFinal = inputDir.z > 0 || inputDir.x != 0 ? moveSpeedRun : moveSpeedWalk;
+            moveSpeedFinal = moveSpeedRun;
+            //moveSpeedFinal = inputDir.z > 0 || inputDir.x != 0 ? moveSpeedRun : moveSpeedWalk;
         }
         else if(!isJumping)
         {
