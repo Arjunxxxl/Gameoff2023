@@ -132,7 +132,7 @@ public class Grenade : MonoBehaviour
             return;
         }
 
-        grenadeActiveTimeElapsed += Time.unscaledDeltaTime;
+        grenadeActiveTimeElapsed += Time.deltaTime;
 
         if (grenadeActiveTimeElapsed >= grenadeMaxActiveDuration)
         {

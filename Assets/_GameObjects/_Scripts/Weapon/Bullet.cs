@@ -42,10 +42,15 @@ public class Bullet : MonoBehaviour
         bulletActiveTimeElapsed = 0;
     }
 
-    private void DeactivateBullet()
+    private void DeactivateBullet(bool isHit)
     {
         bulletActiveTimeElapsed = 0;
         isBulletActive = false;
+
+        ObjectPooler.Instance.SpawnFormPool("BulletImpactEffect", transform.position, 
+                                            Quaternion.Euler(transform.rotation.eulerAngles.x,
+                                                            transform.rotation.eulerAngles.y * (isHit? -1 : 1),
+                                                            transform.rotation.eulerAngles.z)).GetComponent<ParticleSystem>().Play();
 
         gameObject.SetActive(false);
     }
@@ -65,7 +70,7 @@ public class Bullet : MonoBehaviour
 
             if(Vector3.Distance(transform.position, destinationPos) < 0.05f)
             {
-                DeactivateBullet();
+                DeactivateBullet(true);
             }
         }
         else
@@ -87,7 +92,7 @@ public class Bullet : MonoBehaviour
 
         if(bulletActiveTimeElapsed >= bulletMaxActiveDuration)
         {
-            DeactivateBullet();
+            DeactivateBullet(false);
         }
     }
     #endregion
