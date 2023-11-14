@@ -82,9 +82,11 @@ public class Grenade : MonoBehaviour
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        ObjectPooler.Instance.SpawnFormPool("GrenadeExplosionEffect", transform.position, Quaternion.identity).GetComponent<ParticleSystem>().Play();
-
         TryDoingDamage();
+
+        CameraShake.ShakeCamera?.Invoke(10, 2);
+
+        ObjectPooler.Instance.SpawnFormPool("GrenadeExplosionEffect", transform.position, Quaternion.identity).GetComponent<ParticleSystem>().Play();
 
         gameObject.SetActive(false);
     }

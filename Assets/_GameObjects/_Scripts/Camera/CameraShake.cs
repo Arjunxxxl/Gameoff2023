@@ -18,7 +18,7 @@ public class CameraShake : MonoBehaviour
     [SerializeField] private bool fadeout;
     [SerializeField] private ShakeRandomnessMode shakeRandomnessMode;
 
-    public static Action ShakeCamera;
+    public static Action<float, float> ShakeCamera;
 
     private void OnEnable()
     {
@@ -30,10 +30,10 @@ public class CameraShake : MonoBehaviour
         ShakeCamera -= OnShakeCamera;
     }
 
-    private void OnShakeCamera()
+    private void OnShakeCamera(float strengthMultiplyer, float durationMultiplyer)
     {
         cameraT.DOComplete();
-        cameraT.DOShakePosition(shakeDuration, positionStrength, vibrato, randomness, snapping, fadeout, shakeRandomnessMode).SetUpdate(true);
-        cameraT.DOShakeRotation(shakeDuration, rotationStrength, vibrato, randomness, fadeout, shakeRandomnessMode).SetUpdate(true);
+        cameraT.DOShakePosition(shakeDuration * durationMultiplyer, positionStrength * strengthMultiplyer, vibrato, randomness, snapping, fadeout, shakeRandomnessMode).SetUpdate(true);
+        cameraT.DOShakeRotation(shakeDuration * durationMultiplyer, rotationStrength * strengthMultiplyer, vibrato, randomness, fadeout, shakeRandomnessMode).SetUpdate(true);
     }
 }

@@ -31,7 +31,7 @@ public class Rifle : Weapon
         objectPooler.SpawnFormPool("ShellEject1", shellEjectParticleSpawnT.transform.position, Quaternion.LookRotation(transform.forward, Vector3.up))
                     .GetComponent<ParticleSystem>().Play();
 
-        CameraShake.ShakeCamera?.Invoke();
+        CameraShake.ShakeCamera?.Invoke(1, 1);
     }
     #endregion
 }
