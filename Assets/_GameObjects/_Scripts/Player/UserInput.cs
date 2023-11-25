@@ -98,12 +98,12 @@ public class UserInput : MonoBehaviour
 
     private void GetSprintInput()
     {
-        isSprinting = !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+        isSprinting = !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl));
     }
 
     private void GetCrouchInput()
     {
-        isCrouching = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+        isCrouching = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
         if (input.y != 0)
         {

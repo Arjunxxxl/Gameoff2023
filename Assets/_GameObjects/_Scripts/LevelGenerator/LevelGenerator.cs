@@ -13,7 +13,8 @@ public class LevelGenerator : MonoBehaviour
 
     [Header("Spawning Data")]
     [SerializeField] private List<LevelObject> spawnedLevelObjects;
-    [SerializeField] private bool isLevelStarted;
+    [SerializeField] private List<GameObject> levelBoundayObjs;
+    [SerializeField] private bool isLevelSpawningTriggered;
     [SerializeField] private bool isLevelSpawned;
 
     [Header("Wave Function Collapse")]
@@ -50,9 +51,9 @@ public class LevelGenerator : MonoBehaviour
             GenerateLevel();
         }
 
-        if(isWaveFunctionCollapsed && !isLevelStarted)
+        if(isWaveFunctionCollapsed && !isLevelSpawningTriggered)
         {
-            isLevelStarted = true;
+            isLevelSpawningTriggered = true;
             isLevelSpawned = false;
 
             StartCoroutine(SpawneLevel());
@@ -88,7 +89,13 @@ public class LevelGenerator : MonoBehaviour
         if (useCleanUp)
         {
             yield return null;
-            CleanUp();
+
+            for (int i = 0; i < 2; i++)
+            {
+                CleanUp();
+
+                yield return null;
+            }
         }
 
         isWaveFunctionCollapsed = true;
@@ -275,7 +282,9 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        LevelObjectType randLevelObjectType = finalLevelObjectType[Random.Range(0, finalLevelObjectType.Count)];
+        LevelObjectType randLevelObjectType = finalLevelObjectType.Count > 0 ?
+                                                finalLevelObjectType[Random.Range(0, finalLevelObjectType.Count)]
+                                                : gridNode.possibleLevelObjectType[Random.Range(0, gridNode.possibleLevelObjectType.Count)];
 
         gridNode.possibleLevelObjectType.Clear();
 
@@ -884,12 +893,16 @@ public class LevelGenerator : MonoBehaviour
             spawnedLevelObjects.Clear();
         }
 
-        for(int i = 0; i < gridManager.GridNodesLst.Count; i++)
+        SpawnLevelBoundary();
+
+        for (int i = 0; i < gridManager.GridNodesLst.Count; i++)
         {
             SpawnObject(gridManager.GridNodesLst[i]);
 
             yield return null;
         }
+
+        isLevelSpawned = true;
     }
 
     private void SpawnObject(GridNode gridNode)
@@ -906,6 +919,95 @@ public class LevelGenerator : MonoBehaviour
         gridNode.UpdateLevelObject(obj.GetComponent<LevelObject>());
 
         spawnedLevelObjects.Add(obj.GetComponent<LevelObject>());
+    }
+
+    private void SpawnLevelBoundary()
+    {
+        if (levelBoundayObjs == null)
+        {
+            levelBoundayObjs = new List<GameObject>();
+        }
+        else
+        {
+            foreach (GameObject item in levelBoundayObjs)
+            {
+                item.SetActive(false);
+            }
+
+            levelBoundayObjs.Clear();
+        }
+
+        int xMin = 0;
+        int xMax = gridManager.GridSize.x;
+        int zMin = 0;
+        int zMax = gridManager.GridSize.z;
+
+        Vector3 pos = Vector3.zero;
+        GameObject obj = null;
+
+        for (int i = xMin; i < xMax; i++)
+        {
+            pos = gridManager.GetGridNode(new Vector3Int(i, 0, zMin)).gridPos;
+            pos.z -= gridManager.GridCellSize.z;
+
+            obj = objectPooler.SpawnFormPool(Random.Range(0f, 10f) < 5f ? "city wall" : "city wall tower", pos, Quaternion.Euler(0, 180, 0));
+
+            levelBoundayObjs.Add(obj);
+        }
+
+        for (int i = xMin; i < xMax; i++)
+        {
+            pos = gridManager.GetGridNode(new Vector3Int(i, 0, zMax - 1)).gridPos;
+            pos.z += gridManager.GridCellSize.z;
+
+            obj = objectPooler.SpawnFormPool(Random.Range(0f, 10f) < 5f ? "city wall" : "city wall tower", pos, Quaternion.Euler(0, 0, 0));
+
+            levelBoundayObjs.Add(obj);
+        }
+
+        for (int i = zMin; i < zMax; i++)
+        {
+            pos = gridManager.GetGridNode(new Vector3Int(xMin, 0, i)).gridPos;
+            pos.x -= gridManager.GridCellSize.x;
+
+            obj = objectPooler.SpawnFormPool(Random.Range(0f, 10f) < 5f ? "city wall" : "city wall tower", pos, Quaternion.Euler(0, -90, 0));
+
+            levelBoundayObjs.Add(obj);
+        }
+
+        for (int i = zMin; i < zMax; i++)
+        {
+            pos = gridManager.GetGridNode(new Vector3Int(xMax - 1, 0, i)).gridPos;
+            pos.x += gridManager.GridCellSize.x;
+
+            obj = objectPooler.SpawnFormPool(Random.Range(0f, 10f) < 5f ? "city wall" : "city wall tower", pos, Quaternion.Euler(0, 90, 0));
+
+            levelBoundayObjs.Add(obj);
+        }
+
+        pos = gridManager.GetGridNode(new Vector3Int(xMin, 0, zMin)).gridPos;
+        pos.x -= gridManager.GridCellSize.x;
+        pos.z -= gridManager.GridCellSize.z;
+        obj = objectPooler.SpawnFormPool("city wall cornor", pos, Quaternion.Euler(0, 0, 0));
+        levelBoundayObjs.Add(obj);
+
+        pos = gridManager.GetGridNode(new Vector3Int(xMin, 0, zMax - 1)).gridPos;
+        pos.x -= gridManager.GridCellSize.x;
+        pos.z += gridManager.GridCellSize.z;
+        obj = objectPooler.SpawnFormPool("city wall cornor", pos, Quaternion.Euler(0, 0, 0));
+        levelBoundayObjs.Add(obj);
+
+        pos = gridManager.GetGridNode(new Vector3Int(xMax - 1, 0, zMin)).gridPos;
+        pos.x += gridManager.GridCellSize.x;
+        pos.z -= gridManager.GridCellSize.z;
+        obj = objectPooler.SpawnFormPool("city wall cornor", pos, Quaternion.Euler(0, 0, 0));
+        levelBoundayObjs.Add(obj);
+
+        pos = gridManager.GetGridNode(new Vector3Int(xMax - 1, 0, zMax - 1)).gridPos;
+        pos.x += gridManager.GridCellSize.x;
+        pos.z += gridManager.GridCellSize.z;
+        obj = objectPooler.SpawnFormPool("city wall cornor", pos, Quaternion.Euler(0, 0, 0));
+        levelBoundayObjs.Add(obj);
     }
     #endregion
 }

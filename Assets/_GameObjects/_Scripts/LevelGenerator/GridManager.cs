@@ -14,6 +14,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<GridNode> gridNodesLst;
 
     public Vector3Int GridSize { get { return gridSize; } }
+    public Vector3 GridCellSize { get { return gridCellSize; } }
     public GridNode[,,] GridNodes { get { return gridNodes; } }
     public List<GridNode> GridNodesLst { get { return gridNodesLst; } }
 

@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
 
     public void SetUp()
     {
-        //Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked;
 
         isPlayerActive = false;
 

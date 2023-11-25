@@ -10,6 +10,7 @@ public class LevelObject : MonoBehaviour
 
     [Header("Rotation")]
     [SerializeField] private Vector3 originalRotation;
+    [SerializeField] private bool randomRotation;
 
     [Header("Connecting Points")]
     [SerializeField] private List<ObjectConnector> connectors;
@@ -30,7 +31,14 @@ public class LevelObject : MonoBehaviour
 
     public void SetUp(GridNode gridNode)
     {
-        transform.rotation = Quaternion.Euler(originalRotation);
+        if (randomRotation)
+        {
+            transform.rotation = Quaternion.Euler(0, Random.Range(0, 5) * 90, 0);
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(originalRotation);
+        }
 
         this.gridNode = gridNode;
     }
