@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Unity.AI.Navigation;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -29,6 +30,8 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private int minObjectIndex;
     [SerializeField] private int maxObjectIndex;
 
+    private NavMeshSurface navMeshSurface;
+
     private GridManager gridManager;
     private LevelObjectConnectionData levelObjectConnection;
     private ObjectPooler objectPooler;
@@ -39,6 +42,8 @@ public class LevelGenerator : MonoBehaviour
         gridManager = GridManager.Instance;
         levelObjectConnection = LevelObjectConnectionData.Instance;
         objectPooler = ObjectPooler.Instance;
+
+        navMeshSurface = GetComponent<NavMeshSurface>();
 
         Random.InitState(seed);
     }
@@ -902,7 +907,10 @@ public class LevelGenerator : MonoBehaviour
             yield return null;
         }
 
+        yield return null;
+
         isLevelSpawned = true;
+        BakeNavMeshSurface();
     }
 
     private void SpawnObject(GridNode gridNode)
@@ -913,6 +921,7 @@ public class LevelGenerator : MonoBehaviour
 
         GameObject obj = objectPooler.SpawnFormPool(objectTag, gridNode.gridPos, randRotation);
         obj.SetActive(true);
+        obj.transform.SetParent(transform);
 
         obj.GetComponent<LevelObject>().SetUp(gridNode);
 
@@ -1008,6 +1017,13 @@ public class LevelGenerator : MonoBehaviour
         pos.z += gridManager.GridCellSize.z;
         obj = objectPooler.SpawnFormPool("city wall cornor", pos, Quaternion.Euler(0, 0, 0));
         levelBoundayObjs.Add(obj);
+    }
+    #endregion
+
+    #region Nav Mesh Baking
+    private void BakeNavMeshSurface()
+    {
+        navMeshSurface.BuildNavMesh();
     }
     #endregion
 }
