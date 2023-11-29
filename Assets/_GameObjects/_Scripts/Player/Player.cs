@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public CharacterController characterController { get; private set; }
     public PlayerMovement playerMovement { get; private set; }
     public PlyaerHp playerHp { get; private set; }
+    public PlayerHitBox playerHitBox { get; private set; }
     public PlayerCollisionDetection collisionDetection { get; private set; }
     public PlayerAnimator playerAnimator { get; private set; }
     public WeaponHandler weaponHandler { get; private set; }
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         playerMovement = GetComponent<PlayerMovement>();
         playerHp = GetComponent<PlyaerHp>();
+        playerHitBox = GetComponentInChildren<PlayerHitBox>();
         collisionDetection = GetComponent<PlayerCollisionDetection>();
         playerAnimator = GetComponent<PlayerAnimator>();
         weaponHandler = GetComponent<WeaponHandler>();
@@ -52,6 +54,7 @@ public class Player : MonoBehaviour
 
         playerMovement.SetUp(characterController, userInput, collisionDetection, playerAnimator);
         playerHp.SetUp();
+        playerHitBox.SetUp(transform);
         playerAnimator.SetUp();
         playerMovement.SetPlayerActive(isPlayerActive);
         weaponHandler.SetUp(this);

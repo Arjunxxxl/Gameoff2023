@@ -34,7 +34,7 @@ Transform:
   m_Children:
   - {fileID: 3176327939855415497}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &6749229348611738070
 SphereCollider:
@@ -132,6 +132,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   objectsInEplosionRange: []
+  damageAmt: 10
 --- !u!1001 &3172217137809265473
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -23,7 +23,7 @@ public class Rifle : Weapon
     public void SpawnBullet()
     {
         GameObject obj = objectPooler.SpawnFormPool("rifle bullet", bulletSpawnT.position, Quaternion.LookRotation(bulletSpawnT.forward, Vector3.up));
-        obj.GetComponent<Bullet>().ActivateBullet(player.shootingManager.IsHit, player.shootingManager.HitPoint);
+        obj.GetComponent<Bullet>().ActivateBullet(player.shootingManager.IsHit, player.shootingManager.HitPoint, player.shootingManager.HitObj);
 
         objectPooler.SpawnFormPool("RifleShotParticle", gunshotParticleSpawnT.transform.position, Quaternion.LookRotation(transform.forward, Vector3.up))
                             .GetComponent<ParticleSystem>().Play();

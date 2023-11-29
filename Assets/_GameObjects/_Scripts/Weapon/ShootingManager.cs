@@ -11,10 +11,12 @@ public class ShootingManager : MonoBehaviour
     [SerializeField] private LayerMask hitLayer;
     [SerializeField] private Vector3 hitPoint;
     [SerializeField] private bool isHit;
+    [SerializeField] private GameObject hitObj;
     private RaycastHit hit;
 
     public bool IsHit { get { return isHit; } }
     public Vector3 HitPoint { get { return hitPoint; } }
+    public GameObject HitObj { get { return hitObj; } }
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +40,11 @@ public class ShootingManager : MonoBehaviour
         if (hit.collider != null)
         {
             hitPoint = hit.point;
+            hitObj = hit.collider.gameObject;
+        }
+        else
+        {
+            hitObj = null;
         }
     }
 }

@@ -28,6 +28,9 @@ public class Grenade : MonoBehaviour
     [SerializeField] private LayerMask explosionLayer;
     [SerializeField] private List<GameObject> objectsInEplosionRange;
 
+    [Header("Damage")]
+    [SerializeField] private int damageAmt;
+
     Rigidbody rb;
 
     // Update is called once per frame
@@ -153,6 +156,11 @@ public class Grenade : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             objectsInEplosionRange.Add(hitCollider.gameObject);
+
+            if(hitCollider.GetComponent<EnemyHitBox>())
+            {
+                hitCollider.GetComponent<EnemyHitBox>().DealDamage(damageAmt);
+            }
         }
     }
     #endregion

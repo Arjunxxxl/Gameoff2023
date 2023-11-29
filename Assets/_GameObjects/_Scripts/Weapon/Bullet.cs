@@ -12,6 +12,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private Vector3 moveDir;
     [SerializeField] private Vector3 destinationPos;
+    [SerializeField] private GameObject bulletHitObj;
 
     [Header("Bullet Active Duration")]
     [SerializeField] private float bulletMaxActiveDuration;
@@ -25,9 +26,10 @@ public class Bullet : MonoBehaviour
     }
 
     #region SetUp
-    public void ActivateBullet(bool isMoveToPoint, Vector3 destinationPos)
+    public void ActivateBullet(bool isMoveToPoint, Vector3 destinationPos, GameObject hitObj)
     {
         this.isMoveToPoint = isMoveToPoint;
+        bulletHitObj = hitObj;
 
         if (isMoveToPoint)
         {
@@ -47,10 +49,17 @@ public class Bullet : MonoBehaviour
         bulletActiveTimeElapsed = 0;
         isBulletActive = false;
 
-        ObjectPooler.Instance.SpawnFormPool("BulletImpactEffect", transform.position, 
+        if (bulletHitObj != null && bulletHitObj.GetComponent<EnemyHitBox>())
+        {
+            bulletHitObj.GetComponent<EnemyHitBox>().DealDamage(1);
+        }
+        else
+        {
+            ObjectPooler.Instance.SpawnFormPool("BulletImpactEffect", transform.position,
                                             Quaternion.Euler(transform.rotation.eulerAngles.x,
-                                                            transform.rotation.eulerAngles.y * (isHit? -1 : 1),
+                                                            transform.rotation.eulerAngles.y * (isHit ? -1 : 1),
                                                             transform.rotation.eulerAngles.z)).GetComponent<ParticleSystem>().Play();
+        }
 
         gameObject.SetActive(false);
     }

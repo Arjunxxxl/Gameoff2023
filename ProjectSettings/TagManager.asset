@@ -20,7 +20,7 @@ TagManager:
   - LevelObjects
   - PickUp
   - Grenade
-  - 
+  - EnemyHitBox
   - 
   - 
   - 
