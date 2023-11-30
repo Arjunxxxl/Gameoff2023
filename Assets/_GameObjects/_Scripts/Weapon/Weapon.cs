@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 public class Weapon : MonoBehaviour
 {
     [SerializeField] protected WeaponType weaponType;
+    [SerializeField] private GameObject beamIndicator;
 
     [Header("Weapon Parent")]
     [SerializeField] protected Transform weaponParentT;
@@ -79,6 +80,8 @@ public class Weapon : MonoBehaviour
         attacked = false;
         isAttacking = false;
 
+        beamIndicator.SetActive(true);
+
         SetUnequipLayer();
         SetUpAmmo();
     }
@@ -97,6 +100,8 @@ public class Weapon : MonoBehaviour
         attackTimeElapsed = 0;
         attacked = false;
         isAttacking = false;
+
+        beamIndicator.SetActive(false);
 
         GameplayMenu.EnableShootMarker?.Invoke(true);
 
@@ -123,6 +128,8 @@ public class Weapon : MonoBehaviour
             isReloading = false;
             StopCoroutine("Reload");
         }
+
+        beamIndicator.SetActive(true);
 
         StartCoroutine(ChangeLayerAfterEnquiping());
     }
@@ -305,6 +312,12 @@ public class Weapon : MonoBehaviour
     {
         ammoLeftInGun--;
         UpdateCurrentAmmo?.Invoke(ammoLeftInGun, ammoLeftInGun <= maxAmmoInGun / 3);
+    }
+
+    public void AddAmmo(int amt)
+    {
+        carryingAmmo += amt;
+        UpdateCarryingAmmo?.Invoke(carryingAmmo, false);
     }
 
     public void TryReloading(bool reload)

@@ -161,6 +161,10 @@ public class Grenade : MonoBehaviour
             {
                 hitCollider.GetComponent<EnemyHitBox>().DealDamage(damageAmt);
             }
+            else if(hitCollider.GetComponent<PlayerHitBox>())
+            {
+                hitCollider.GetComponent<PlayerHitBox>().DealDamage(damageAmt);
+            }
         }
     }
     #endregion

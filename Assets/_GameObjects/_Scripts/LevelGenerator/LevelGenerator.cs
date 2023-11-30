@@ -36,16 +36,14 @@ public class LevelGenerator : MonoBehaviour
     private LevelObjectConnectionData levelObjectConnection;
     private ObjectPooler objectPooler;
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnEnable()
     {
-        gridManager = GridManager.Instance;
-        levelObjectConnection = LevelObjectConnectionData.Instance;
-        objectPooler = ObjectPooler.Instance;
+        GameManager.GameSetUp += SetUp;
+    }
 
-        navMeshSurface = GetComponent<NavMeshSurface>();
-
-        Random.InitState(seed);
+    private void OnDisable()
+    {
+        GameManager.GameSetUp -= SetUp;
     }
 
     // Update is called once per frame
@@ -53,7 +51,7 @@ public class LevelGenerator : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
-            GenerateLevel();
+            SetUp();
         }
 
         if(isWaveFunctionCollapsed && !isLevelSpawningTriggered)
@@ -63,6 +61,21 @@ public class LevelGenerator : MonoBehaviour
 
             StartCoroutine(SpawneLevel());
         }
+    }
+
+    private void SetUp()
+    {
+        gridManager = GridManager.Instance;
+        levelObjectConnection = LevelObjectConnectionData.Instance;
+        objectPooler = ObjectPooler.Instance;
+
+        navMeshSurface = GetComponent<NavMeshSurface>();
+
+        seed = (int)(Random.value * Mathf.Pow(10, Random.Range(1, 5)));
+
+        Random.InitState(seed);
+
+        GenerateLevel();
     }
 
     #region Wave function colapse
@@ -911,6 +924,8 @@ public class LevelGenerator : MonoBehaviour
 
         isLevelSpawned = true;
         BakeNavMeshSurface();
+
+        GameManager.GameSetCompleted?.Invoke();
     }
 
     private void SpawnObject(GridNode gridNode)

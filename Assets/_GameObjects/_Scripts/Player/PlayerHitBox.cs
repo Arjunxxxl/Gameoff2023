@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerHitBox : MonoBehaviour
 {
     [Header("Enemy Target")]
-    [SerializeField] private Transform player;
+    [SerializeField] private Player player;
     [SerializeField] private Transform enemyTarget;
     [SerializeField] private float moveSpeed;
 
@@ -18,10 +18,15 @@ public class PlayerHitBox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(player == null)
+        {
+            return;
+        }
+
         MoveEnemyTargetToPlayer();
     }
 
-    public void SetUp(Transform player)
+    public void SetUp(Player player)
     {
         this.player = player;
 
@@ -30,6 +35,11 @@ public class PlayerHitBox : MonoBehaviour
 
     private void MoveEnemyTargetToPlayer()
     {
-        enemyTarget.position = Vector3.Lerp(enemyTarget.position, player.position, 1 - Mathf.Pow(0.5f, Time.deltaTime * moveSpeed));
+        enemyTarget.position = Vector3.Lerp(enemyTarget.position, player.transform.position, 1 - Mathf.Pow(0.5f, Time.deltaTime * moveSpeed));
+    }
+
+    public void DealDamage(int amt)
+    {
+        player.playerHp.UpdateHp(amt * -1);
     }
 }

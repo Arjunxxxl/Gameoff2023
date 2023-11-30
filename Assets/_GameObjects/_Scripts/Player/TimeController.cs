@@ -32,6 +32,16 @@ public class TimeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (player == null)
+        {
+            return;
+        }
+
+        if (!player.IsPlayerActive)
+        {
+            return;
+        }
+
         ChangeTimeScale();
         BurnEnergy();
         GenerateEnergy();
@@ -70,7 +80,11 @@ public class TimeController : MonoBehaviour
                 currentTimeScale = normalTimeScale;
             }
         }
-        
+
+        PostProcessingManager.Instance.SetBloom(slowTime, false);
+        PostProcessingManager.Instance.SetChromaticAberration(slowTime, false);
+        PostProcessingManager.Instance.SetVignette(slowTime, false);
+
         Time.timeScale = currentTimeScale;
         Time.fixedDeltaTime = Time.timeScale * fixedDeltaTimeDefaultValue;
     }

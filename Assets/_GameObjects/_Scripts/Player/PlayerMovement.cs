@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -92,13 +91,13 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetMoveInput();
-
-        CheckGround();
-        ApplyGravity();
-
         if (isPlayerActive)
         {
+            GetMoveInput();
+
+            CheckGround();
+            ApplyGravity();
+
             SetCharacterControllerHeightAndCenter();
 
             Dash();
@@ -110,6 +109,8 @@ public class PlayerMovement : MonoBehaviour
 
             Move();
             Rotate();
+
+            CheckIfFellThroughGround();
         }
     }
 
@@ -236,6 +237,14 @@ public class PlayerMovement : MonoBehaviour
         moveDir.y = moveSpeedY;
 
         characterController.Move(moveDir * Time.unscaledDeltaTime);
+    }
+
+    private void CheckIfFellThroughGround()
+    {
+        if (transform.position.y < -5f)
+        {
+            transform.position = Vector3.up * 5;
+        }
     }
     #endregion
 

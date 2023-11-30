@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,23 @@ public class Player : MonoBehaviour
 
     public ObjectPooler objectPooler { get; private set; }
 
+    public bool IsPlayerActive { get { return isPlayerActive; } }
+
+    public static Action SetUpPlayer;
+    public static Action PlayerDied;
+
+    private void OnEnable()
+    {
+        SetUpPlayer += SetUp;
+        GameManager.GameSetCompleted += SetPlayerActive;
+    }
+
+    private void OnDisable()
+    {
+        SetUpPlayer -= SetUp;
+        GameManager.GameSetCompleted -= SetPlayerActive;
+    }
+
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -37,16 +55,12 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        userInput = UserInput.Instance;
-        objectPooler = ObjectPooler.Instance;
-
-        SetUp();
-        SetPlayerActive();
     }
 
     public void SetUp()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        userInput = UserInput.Instance;
+        objectPooler = ObjectPooler.Instance;
 
         isPlayerActive = false;
 
@@ -54,11 +68,12 @@ public class Player : MonoBehaviour
 
         playerMovement.SetUp(characterController, userInput, collisionDetection, playerAnimator);
         playerHp.SetUp();
-        playerHitBox.SetUp(transform);
+        playerHitBox.SetUp(this);
         playerAnimator.SetUp();
-        playerMovement.SetPlayerActive(isPlayerActive);
         weaponHandler.SetUp(this);
         timeController.SetUp(this);
+
+        playerMovement.SetPlayerActive(isPlayerActive);
     }
 
     public void SetPlayerActive()
@@ -68,5 +83,20 @@ public class Player : MonoBehaviour
         userInput.SetUserInputActive(isPlayerActive);
 
         playerMovement.SetPlayerActive(isPlayerActive);
+    }
+
+    public void AmmoPickedUp(int amt)
+    {
+        weaponHandler.AddAmmo(amt);
+    }
+
+    public void GrenadePickedUp(int amt)
+    {
+        weaponHandler.AddGrenade(amt);
+    }
+
+    public void HpPickedUp(int amt)
+    {
+        playerHp.UpdateHp(amt);
     }
 }

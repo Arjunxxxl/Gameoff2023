@@ -42,6 +42,8 @@ public class EnemyHp : MonoBehaviour
 
             ObjectPooler.Instance.SpawnFormPool("Enemy Explosion", transform.position + enemy.enemyMovement.EnemyCenterOffset, Quaternion.identity).GetComponent<ParticleSystem>().Play();
 
+            EnemySpawner.RemoveEnemy?.Invoke(enemy);
+
             gameObject.SetActive(false);
         }
         else

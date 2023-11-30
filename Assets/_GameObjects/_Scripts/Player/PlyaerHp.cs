@@ -32,7 +32,7 @@ public class PlyaerHp : MonoBehaviour
         UpdateCurrentHp?.Invoke(currentHp);
     }
 
-    private void UpdateHp(int amt)
+    public void UpdateHp(int amt)
     {
         currentHp += amt;
 
@@ -42,8 +42,10 @@ public class PlyaerHp : MonoBehaviour
         }
         else if(currentHp <= 0)
         {
-            isDead = true;
             currentHp = 0;
+            isDead = true;
+
+            Player.PlayerDied?.Invoke();
         }
 
         UpdateCurrentHp?.Invoke(currentHp);

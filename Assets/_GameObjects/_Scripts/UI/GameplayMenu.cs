@@ -32,9 +32,25 @@ public class GameplayMenu : MonoBehaviour
     [SerializeField] private TweenUtil currentAmmoTween;
     [SerializeField] private TweenUtil bombTxtTween;
 
+    [Header("Enemies Txt")]
+    [SerializeField] private TMP_Text waveTxt;
+    [SerializeField] private TMP_Text enemiesTxt;
+    [SerializeField] private TMP_Text nextWaveTimerTxt;
+    [SerializeField] private GameObject waveScoreUiParent;
+    [SerializeField] private GameObject waveTimerUiParent;
+
+    [Header("Time Surviving")]
+    [SerializeField] private TMP_Text timeSurvivingTxt;
+
     public static Action<bool> EnableShootMarker;
     public static Action<bool, bool> EnablePrimaryWeaponUi;
     public static Action<bool> EnableBombUi;
+
+    public static Action<bool> SetWaveActive;
+    public static Action<int> UpdateWaveTxt;
+    public static Action<int, int> UpdateEnemiesTxt;
+    public static Action<int> UpdateNextWaveTimerTxt;
+    public static Action<float> UpdateTimeSurvivingTxt;
 
     private void OnEnable()
     {
@@ -49,6 +65,13 @@ public class GameplayMenu : MonoBehaviour
         EnableShootMarker += OnEnableHitIndicator;
         EnablePrimaryWeaponUi += OnEnablePrimaryWeaponUi;
         EnableBombUi += OnEnableBombUi;
+
+        SetWaveActive += OnSetWaveActive;
+        UpdateWaveTxt += OnUpdateWaveTxt;
+        UpdateEnemiesTxt += OnUpdateEnemiesTxt;
+        UpdateNextWaveTimerTxt += OnUpdateNextWaveTimerTxt;
+
+        UpdateTimeSurvivingTxt += OnUpdateTimeSurvivingTxt;
     }
 
     private void OnDisable()
@@ -64,18 +87,19 @@ public class GameplayMenu : MonoBehaviour
         EnableShootMarker -= OnEnableHitIndicator;
         EnablePrimaryWeaponUi -= OnEnablePrimaryWeaponUi;
         EnableBombUi -= OnEnableBombUi;
+
+        SetWaveActive -= OnSetWaveActive;
+        UpdateWaveTxt -= OnUpdateWaveTxt;
+        UpdateEnemiesTxt -= OnUpdateEnemiesTxt;
+        UpdateNextWaveTimerTxt -= OnUpdateNextWaveTimerTxt;
+
+        UpdateTimeSurvivingTxt -= OnUpdateTimeSurvivingTxt;
     }
 
     // Start is called before the first frame update
     void Start()
     {
         SetUp();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     #region SetUp
@@ -152,6 +176,49 @@ public class GameplayMenu : MonoBehaviour
     private void UpdateHp(int hpLeft)
     {
         hpTxt.text = hpLeft.ToString();
+    }
+    #endregion
+
+    #region Wave / Enemies
+    private void OnSetWaveActive(bool active)
+    {
+        waveScoreUiParent.SetActive(active);
+        waveTimerUiParent.SetActive(!active);
+    }
+
+    private void OnUpdateWaveTxt(int val)
+    {
+        waveTxt.text = "Wave #" + val;
+    }
+
+    private void OnUpdateEnemiesTxt(int currentEnemies, int maxEnemies)
+    {
+        enemiesTxt.text = (maxEnemies - currentEnemies) + " / " + maxEnemies;
+    }
+
+    private void OnUpdateNextWaveTimerTxt(int timer)
+    {
+        nextWaveTimerTxt.text = "Next Wave in: " + timer;
+    }
+    #endregion
+
+    #region Time Surviving
+    private void OnUpdateTimeSurvivingTxt(float val)
+    {
+        int hr = (int)(val / 3600);
+        int min = (int)((val - hr * 3600) / 60);
+        int sec = (int)(val - hr * 3600 - min * 60);
+
+        timeSurvivingTxt.text = "";
+
+        timeSurvivingTxt.text += hr < 10 ? "0" + hr : hr;
+        timeSurvivingTxt.text += " Hr ";
+
+        timeSurvivingTxt.text += min < 10 ? "0" + min : min;
+        timeSurvivingTxt.text += " Min ";
+
+        timeSurvivingTxt.text += sec < 10 ? "0" + sec : sec;
+        timeSurvivingTxt.text += " Sec ";
     }
     #endregion
 }

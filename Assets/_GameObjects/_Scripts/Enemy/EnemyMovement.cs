@@ -18,6 +18,7 @@ public class EnemyMovement : MonoBehaviour
 
     [Header("Active Data")]
     [SerializeField] private bool isAgentActive;
+    [SerializeField] private bool chasePlayer;
     [SerializeField] private float activationRange;
     [SerializeField] private LayerMask playerLayer;
 
@@ -56,7 +57,13 @@ public class EnemyMovement : MonoBehaviour
 
         this.target = target;
 
-        isAgentActive = false;
+        isAgentActive = true;
+        chasePlayer = false;
+    }
+
+    public void SetChasePlayer(bool chasePlayer)
+    {
+        this.chasePlayer = chasePlayer;
     }
 
     #region Activation/Deactivation
@@ -71,7 +78,7 @@ public class EnemyMovement : MonoBehaviour
     #region Move
     private void MoveAgent()
     {
-        if (isAgentActive)
+        if (isAgentActive || chasePlayer)
         {
             agent.SetDestination(target.position - enemyCenterOffset);
 

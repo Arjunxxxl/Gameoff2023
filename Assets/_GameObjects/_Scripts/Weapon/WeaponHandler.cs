@@ -62,6 +62,16 @@ public class WeaponHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(player == null)
+        {
+            return;
+        }
+
+        if(!player.IsPlayerActive)
+        {
+            return;
+        }
+
         ThrowGrenade();
 
         if (currentEquipedWeapon == null)
@@ -196,6 +206,11 @@ public class WeaponHandler : MonoBehaviour
     {
         currentEquipedWeapon.TryReloading(player.userInput.Reload);
     }
+
+    public void AddAmmo(int amt)
+    {
+        currentEquipedWeapon.AddAmmo(amt);
+    }
     #endregion
 
     #region Grenade
@@ -221,6 +236,12 @@ public class WeaponHandler : MonoBehaviour
 
             UpdateGrenadeCount?.Invoke(carryingGrenade, carryingGrenade <= 3);
         }
+    }
+
+    public void AddGrenade(int amt)
+    {
+        carryingGrenade += amt;
+        UpdateGrenadeCount?.Invoke(carryingGrenade, carryingGrenade <= 3);
     }
     #endregion
 }

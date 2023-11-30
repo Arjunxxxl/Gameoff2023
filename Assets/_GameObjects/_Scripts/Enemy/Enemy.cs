@@ -20,7 +20,6 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetUp();
     }
 
     // Update is called once per frame
@@ -29,7 +28,7 @@ public class Enemy : MonoBehaviour
         
     }
 
-    public void SetUp()
+    public void SetUp(Transform player)
     {
         enemyMovement = GetComponent<EnemyMovement>();
         enemyShooter = GetComponent<EnemyShooter>();
@@ -39,10 +38,19 @@ public class Enemy : MonoBehaviour
 
         SetRandonEnemyType();
 
+        this.player = player;
+
         enemyMovement.SetUp(this, player);
         enemyShooter.SetUp(this);
         enemyHp.SetUp(this);
         enemyHitBox.SetUp(this);
+
+        SetChasePlayer(false);
+    }
+
+    public void SetChasePlayer(bool chasePlayer)
+    {
+        enemyMovement.SetChasePlayer(chasePlayer);
     }
 
     private void SetRandonEnemyType()
