@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4944812271031626762}
   - component: {fileID: 2100233055466581521}
   - component: {fileID: 2194110364860767963}
-  m_Layer: 6
+  m_Layer: 13
   m_Name: Grenade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +130,7 @@ MonoBehaviour:
   explosionRange: 5
   explosionLayer:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 49152
   objectsInEplosionRange: []
   damageAmt: 10
 --- !u!1001 &3172217137809265473
@@ -147,7 +147,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1882585320748724, guid: 348818f667510814d849561cb9b1707b, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 4907947993721736, guid: 348818f667510814d849561cb9b1707b, type: 3}
       propertyPath: m_RootOrder

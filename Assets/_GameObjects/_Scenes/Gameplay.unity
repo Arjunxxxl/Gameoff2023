@@ -9479,7 +9479,7 @@ GameObject:
   - component: {fileID: 1542905571}
   - component: {fileID: 1542905572}
   - component: {fileID: 1542905573}
-  m_Layer: 8
+  m_Layer: 15
   m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17264,7 +17264,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 7543
+    m_Bits: 64887
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
