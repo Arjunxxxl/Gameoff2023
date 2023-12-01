@@ -22,6 +22,8 @@ public class Rifle : Weapon
     #region Attack
     public void SpawnBullet()
     {
+        SoundManager.PlayAudio("shoot", true, true);
+
         GameObject obj = objectPooler.SpawnFormPool("rifle bullet", bulletSpawnT.position, Quaternion.LookRotation(bulletSpawnT.forward, Vector3.up));
         obj.GetComponent<Bullet>().ActivateBullet(player.shootingManager.IsHit, player.shootingManager.HitPoint, player.shootingManager.HitObj);
 

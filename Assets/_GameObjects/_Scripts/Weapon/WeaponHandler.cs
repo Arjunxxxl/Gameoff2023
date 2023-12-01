@@ -38,6 +38,7 @@ public class WeaponHandler : MonoBehaviour
     [Header("Grenade")]
     [SerializeField] private Transform grenadeSpawnT;
     [SerializeField] private int carryingGrenade;
+    [SerializeField] private int maxGrenade;
 
     private Player player;
 
@@ -46,11 +47,15 @@ public class WeaponHandler : MonoBehaviour
 
     private void OnEnable()
     {
+        EnemySpawner.NewWaveStarted += ResetWeapons;
+
         EquipWeapon += SetWeaponEquiped;
     }
 
     private void OnDisable()
     {
+        EnemySpawner.NewWaveStarted -= ResetWeapons;
+
         EquipWeapon -= SetWeaponEquiped;
     }
 
@@ -216,6 +221,8 @@ public class WeaponHandler : MonoBehaviour
     #region Grenade
     private void SetUpGrenade()
     {
+        carryingGrenade = maxGrenade;
+
         GameplayMenu.EnableBombUi(carryingGrenade > 0);
         UpdateGrenadeCount?.Invoke(carryingGrenade, carryingGrenade <= 3);
     }
@@ -235,6 +242,8 @@ public class WeaponHandler : MonoBehaviour
             }
 
             UpdateGrenadeCount?.Invoke(carryingGrenade, carryingGrenade <= 3);
+
+            SoundManager.PlayAudio("grenade throw", true, true);
         }
     }
 
@@ -244,4 +253,14 @@ public class WeaponHandler : MonoBehaviour
         UpdateGrenadeCount?.Invoke(carryingGrenade, carryingGrenade <= 3);
     }
     #endregion
+
+    private void ResetWeapons()
+    {
+        SetUpGrenade();
+
+        if(currentEquipedWeapon)
+        {
+            currentEquipedWeapon.SetUpAmmo();
+        }
+    }
 }

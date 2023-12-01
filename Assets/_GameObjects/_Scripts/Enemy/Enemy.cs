@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private Transform player;
+    [SerializeField] private Player player;
 
     [Header("Enemy Type")]
     [SerializeField] private List<GameObject> enemyTypes;
@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
     public EnemyHp enemyHp { get; private set; }
     public EnemyHitBox enemyHitBox { get; private set; }
 
-    public Transform Player {  get { return player; } }
+    public Player Player {  get { return player; } }
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +28,7 @@ public class Enemy : MonoBehaviour
         
     }
 
-    public void SetUp(Transform player)
+    public void SetUp(Player player)
     {
         enemyMovement = GetComponent<EnemyMovement>();
         enemyShooter = GetComponent<EnemyShooter>();
@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour
 
         this.player = player;
 
-        enemyMovement.SetUp(this, player);
+        enemyMovement.SetUp(this, player.transform);
         enemyShooter.SetUp(this);
         enemyHp.SetUp(this);
         enemyHitBox.SetUp(this);

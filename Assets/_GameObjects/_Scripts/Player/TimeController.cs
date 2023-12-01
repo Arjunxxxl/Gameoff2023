@@ -81,6 +81,11 @@ public class TimeController : MonoBehaviour
             }
         }
 
+        if(slowTime)
+        {
+            SoundManager.PlayAudio("time slow", true, false);
+        }
+
         PostProcessingManager.Instance.SetBloom(slowTime, false);
         PostProcessingManager.Instance.SetChromaticAberration(slowTime, false);
         PostProcessingManager.Instance.SetVignette(slowTime, false);

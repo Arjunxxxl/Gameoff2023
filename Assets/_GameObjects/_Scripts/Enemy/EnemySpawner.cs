@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private Transform player;
+    [SerializeField] private Player player;
 
     [Header("Wave Data")]
     [SerializeField] private int currentWaveNumber;
@@ -26,6 +26,7 @@ public class EnemySpawner : MonoBehaviour
     public static Action StartWaves;
     public static Action<Enemy> RemoveEnemy;
     public static Action<List<Transform>> SetUpSpawnPoints;
+    public static Action NewWaveStarted;
 
     private void OnEnable()
     {
@@ -86,6 +87,8 @@ public class EnemySpawner : MonoBehaviour
         SpawnEnemies();
 
         PickUpManager.SetUpPickUps?.Invoke();
+
+        NewWaveStarted?.Invoke();
 
         GameplayMenu.SetWaveActive?.Invoke(true);
         GameplayMenu.UpdateWaveTxt?.Invoke(currentWaveNumber);

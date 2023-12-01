@@ -9,6 +9,8 @@ public class PlayerHitBox : MonoBehaviour
     [SerializeField] private Transform enemyTarget;
     [SerializeField] private float moveSpeed;
 
+    public Transform EnemyTarget { get {  return enemyTarget; } }
+
     // Start is called before the first frame update
     void Start()
     {

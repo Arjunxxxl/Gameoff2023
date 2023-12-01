@@ -276,6 +276,8 @@ public class PlayerMovement : MonoBehaviour
 
             jumpActive = true;
             isJumping = true;
+
+            SoundManager.PlayAudio("jump", true, false);
         }
 
         if(jumpActive)
@@ -359,6 +361,7 @@ public class PlayerMovement : MonoBehaviour
 
             if(isJumping && isCrouching && inputDir.z > 0)
             {
+                SoundManager.PlayAudio("land", true, false);
                 SetDashActive();
             }
 
@@ -406,6 +409,8 @@ public class PlayerMovement : MonoBehaviour
                 playerAnimator.SetDashAnimation(isDashActive);
                 playerAnimator.PlayDashEffect(isDashActive);
             }
+
+            SoundManager.PlayAudio("dash", true, false);
         }
 
         postProcessingManager.SetLensDistortion(isDashActive, false);

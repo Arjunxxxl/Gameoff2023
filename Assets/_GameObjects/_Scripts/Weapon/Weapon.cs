@@ -277,7 +277,7 @@ public class Weapon : MonoBehaviour
     #endregion
 
     #region Ammo
-    private void SetUpAmmo()
+    public void SetUpAmmo()
     {
         if(IsAmmoWeapon())
         {
@@ -330,6 +330,8 @@ public class Weapon : MonoBehaviour
         isReloading = true;
         tweenUtil.StopAllTween();
         tweenUtil.PlayTween("Reload");
+
+        SoundManager.PlayAudio("reload", true, true);
 
         StartCoroutine(Reload());
     }

@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pickUpType: 2
-  pickUpAmout: 50
+  pickUpAmout: 10
   pickUpRange: 0.5
   playerLayer:
     serializedVersion: 2

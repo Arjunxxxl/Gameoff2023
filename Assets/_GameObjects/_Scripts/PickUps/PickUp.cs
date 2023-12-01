@@ -42,6 +42,8 @@ public class PickUp : MonoBehaviour
                     break;
             }
 
+            SoundManager.PlayAudio?.Invoke("pick up", true, true);
+
             gameObject.SetActive(false);
         }
     }

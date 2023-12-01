@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SoundManager.StopAudio("bg menu");
+
         UiManager.Instance.ShowLoadingScreen();
 
         StartCoroutine(SetUpGame());
@@ -39,5 +41,7 @@ public class GameManager : MonoBehaviour
         EnemySpawner.StartWaves?.Invoke();
 
         UiManager.Instance.ShowGameplayScreen();
+
+        SoundManager.PlayAudio?.Invoke("bg", false, true);
     }
 }

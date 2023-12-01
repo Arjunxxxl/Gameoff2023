@@ -116,8 +116,8 @@ public class UserInput : MonoBehaviour
         mouseInput.x = Input.GetAxis("Mouse X");
         mouseInput.y = Input.GetAxis("Mouse Y");
 
-        mouseInput.x *= mouseSensivityX;
-        mouseInput.y *= mouseSensivityY;
+        mouseInput.x *= mouseSensivityX * LocalDataManager.Instance.MouseSensitivity;
+        mouseInput.y *= mouseSensivityY * LocalDataManager.Instance.MouseSensitivity;
     }
 
     private void GetTimeScaleInput()

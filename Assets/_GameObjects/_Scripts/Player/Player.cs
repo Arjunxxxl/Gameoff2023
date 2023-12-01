@@ -30,12 +30,14 @@ public class Player : MonoBehaviour
     private void OnEnable()
     {
         SetUpPlayer += SetUp;
+        PlayerDied += OnPlayerDied;
         GameManager.GameSetCompleted += SetPlayerActive;
     }
 
     private void OnDisable()
     {
         SetUpPlayer -= SetUp;
+        PlayerDied -= OnPlayerDied;
         GameManager.GameSetCompleted -= SetPlayerActive;
     }
 
@@ -83,6 +85,19 @@ public class Player : MonoBehaviour
         userInput.SetUserInputActive(isPlayerActive);
 
         playerMovement.SetPlayerActive(isPlayerActive);
+    }
+
+    private void OnPlayerDied()
+    {
+        isPlayerActive = false;
+
+        userInput.SetUserInputActive(isPlayerActive);
+
+        playerMovement.SetPlayerActive(isPlayerActive);
+
+        UiManager.Instance.ShowGameOverScreen();
+
+        SoundManager.StopAudio("bg");
     }
 
     public void AmmoPickedUp(int amt)

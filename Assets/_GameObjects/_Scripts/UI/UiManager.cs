@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UiManager : MonoBehaviour
 {
@@ -8,6 +10,10 @@ public class UiManager : MonoBehaviour
     [SerializeField] private Canvas loadingMenu;
     [SerializeField] private Canvas gameplayMenu;
     [SerializeField] private Canvas pauseMenu;
+    [SerializeField] private Canvas gameoverMenu;
+
+    [Header("Button")]
+    [SerializeField] private Button gameOverHomeButton;
 
     #region SingleTon
     public static UiManager Instance;
@@ -27,7 +33,7 @@ public class UiManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameOverHomeButton.onClick.AddListener(OnClickGameOverHomeButton);
     }
 
     public void ShowLoadingScreen()
@@ -37,6 +43,7 @@ public class UiManager : MonoBehaviour
         loadingMenu.enabled = true;
         gameplayMenu.enabled = false;
         pauseMenu.enabled = false;
+        gameoverMenu.enabled = false;
     }
 
     public void ShowGameplayScreen()
@@ -46,6 +53,7 @@ public class UiManager : MonoBehaviour
         loadingMenu.enabled = false;
         gameplayMenu.enabled = true;
         pauseMenu.enabled = false;
+        gameoverMenu.enabled = false;
     }
 
     public void ShowPauseScreen()
@@ -55,5 +63,29 @@ public class UiManager : MonoBehaviour
         loadingMenu.enabled = false;
         gameplayMenu.enabled = false;
         pauseMenu.enabled = true;
+        gameoverMenu.enabled = false;
+    }
+
+    public void ShowGameOverScreen()
+    {
+        Cursor.lockState = CursorLockMode.None;
+
+        loadingMenu.enabled = false;
+        gameplayMenu.enabled = false;
+        pauseMenu.enabled = false;
+        gameoverMenu.enabled = true;
+    }
+
+    private void OnClickGameOverHomeButton()
+    {
+        SoundManager.PlayAudio("button", true, true);
+        StartCoroutine(GameOverHomebutton());
+    }
+
+    IEnumerator GameOverHomebutton()
+    {
+        yield return new WaitForSeconds(0.3f);
+
+        SceneManager.LoadScene(0);
     }
 }

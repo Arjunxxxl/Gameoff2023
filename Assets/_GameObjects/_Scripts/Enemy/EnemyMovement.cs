@@ -91,7 +91,7 @@ public class EnemyMovement : MonoBehaviour
             isDestinationReached = false;
         }
 
-        enemy.enemyAnimator.SetRunning(isAgentActive && !isDestinationReached ? 1 : 0);
+        enemy.enemyAnimator.SetRunning(((isAgentActive || chasePlayer) && !isDestinationReached) ? 1 : 0);
     }
 
     private void Rotate()

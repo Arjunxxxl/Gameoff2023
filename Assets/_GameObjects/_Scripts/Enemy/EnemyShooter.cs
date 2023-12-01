@@ -14,6 +14,7 @@ public class EnemyShooter : MonoBehaviour
     [Header("Firing Data")]
     [SerializeField] private float firingDelay;
     [SerializeField] private float currentFiringTimeElapsed;
+    [SerializeField] private Transform bulletSpawnT;
 
     private Enemy enemy;
 
@@ -50,7 +51,7 @@ public class EnemyShooter : MonoBehaviour
     private void CheckIfDirectLODExist()
     {
         RaycastHit hit;
-        Physics.Raycast(transform.position, (enemy.Player.position - transform.position).normalized, out hit, 1000, playerLayer);
+        Physics.Raycast(transform.position, (enemy.Player.transform.position - transform.position).normalized, out hit, 1000, playerLayer);
 
         isDirectLOSExist = hit.collider != null;
     }
@@ -65,7 +66,11 @@ public class EnemyShooter : MonoBehaviour
 
             if(currentFiringTimeElapsed >= firingDelay)
             {
-                //Fire
+                GameObject obj = ObjectPooler.Instance.SpawnFormPool("Enemy Bullet", bulletSpawnT.position, Quaternion.LookRotation(bulletSpawnT.forward, Vector3.up));
+                obj.GetComponent<EnemyBullet>().ActivateBullet((enemy.Player.playerHitBox.EnemyTarget.position - bulletSpawnT.transform.position).normalized);
+
+                SoundManager.PlayAudio?.Invoke("enemy shoot", false, true);
+
                 currentFiringTimeElapsed = 0;
             }
         }

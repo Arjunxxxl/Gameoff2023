@@ -91,6 +91,8 @@ public class Grenade : MonoBehaviour
 
         ObjectPooler.Instance.SpawnFormPool("GrenadeExplosionEffect", transform.position, Quaternion.identity).GetComponent<ParticleSystem>().Play();
 
+        SoundManager.PlayAudio("grenade blast", true, true);
+
         gameObject.SetActive(false);
     }
     #endregion

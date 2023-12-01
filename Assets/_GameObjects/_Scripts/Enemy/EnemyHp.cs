@@ -44,6 +44,8 @@ public class EnemyHp : MonoBehaviour
 
             EnemySpawner.RemoveEnemy?.Invoke(enemy);
 
+            SoundManager.PlayAudio("enemy die", true, true);
+
             gameObject.SetActive(false);
         }
         else

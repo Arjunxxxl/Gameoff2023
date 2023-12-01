@@ -43,6 +43,8 @@ public class MainMenu : MonoBehaviour
         ShowMainMenu();
 
         Cursor.lockState = CursorLockMode.None;
+
+        SoundManager.PlayAudio("bg menu", false, true);
     }
 
     #region Canvases
@@ -82,6 +84,8 @@ public class MainMenu : MonoBehaviour
     #region Buttons
     private void OnClickPlayButton()
     {
+        //SoundManager.PlayAudio("button", true, true);
+        SoundManager.StopAudio("bg menu");
         StartCoroutine(PlayButton());
     }
 
@@ -96,6 +100,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnClickLearnButton()
     {
+       // SoundManager.PlayAudio("button", true, true);
         StartCoroutine(LearnButton());
     }
 
@@ -108,6 +113,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnClickSettingsButton()
     {
+       // SoundManager.PlayAudio("button", true, true);
         StartCoroutine(SettingsButton());
     }
 
@@ -120,6 +126,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnClickLearnBackButton()
     {
+      //  SoundManager.PlayAudio("button", true, true);
         StartCoroutine(LearnBackButton());
     }
 
@@ -132,6 +139,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnClickSettingsBackButton()
     {
+       // SoundManager.PlayAudio("button", true, true);
         StartCoroutine(SettingsBackButton());
     }
 
